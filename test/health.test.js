@@ -41,7 +41,7 @@ test('all four items register native checks and a game-scoped health page', () =
     assert.ok(check.triggers.includes('mods-changed'));
     assert.equal(check.cacheDuration, 0);
   }
-  assert.equal(extension.page.title, 'Amalur health checks');
+  assert.equal(extension.page.title, 'Amalur Essentials');
   assert.equal(extension.page.options.visible(), false);
   extension.state.settings.gameMode.activeGameId = GAME;
   assert.equal(extension.page.options.visible(), true);

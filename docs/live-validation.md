@@ -33,7 +33,7 @@ archive tree, and results. Obtain the mods from their authors; none are bundled 
 10. Purge before a store repair/update; test redeployment using mods compatible
     with that updated version. Confirm the new original files are not replaced
     with an obsolete backup.
-11. Open **Amalur health checks**. With no framework, confirm that the required
+11. Open **Amalur Essentials**. With no framework, confirm that the required
     row identifies missing runtime DLLs and that the other three rows are optional.
     Enable/deploy the framework and refresh: the framework row should pass. Disable
     or purge it and confirm the row updates. Check the optional editor at its portable
@@ -45,3 +45,12 @@ archive tree, and results. Obtain the mods from their authors; none are bundled 
 Published archive contents and live game loading have not yet been verified in
 this cloud workspace. If a package does not match a supported layout, collect its
 file list and the author's instructions before extending the routing rules.
+
+14. In **Amalur Essentials**, use **Download with Vortex** for a missing mod.
+    Confirm the correct main file enters Downloads with Nexus metadata; install,
+    enable, and deploy it, then confirm the status updates. Test Premium and free
+    accounts: website authorization may still be required for a free account.
+15. Download Save Editor. Confirm only a remaster 3.x main file is offered and no
+    automatic mod installation occurs. Extract/configure the tool, then refresh.
+16. Cancel file selection or Nexus authorization and retry. Confirm the button
+    becomes available again. Confirm the secondary Mod page link still works.

@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.5.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.6.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -69,11 +69,11 @@ markers are `dinput8.dll`, `re_mod.dll`, `dxgi.dll`, `d3d11.dll`, and `d3d9.dll`
 
 ## Optional tools and recommendations
 
-Open **Amalur health checks** in Vortex's sidebar while managing Re-Reckoning.
+Open **Amalur Essentials** in Vortex's sidebar while managing Re-Reckoning.
 All setup checks and optional recommendations appear here, without startup or
 setup notifications. The page refreshes on profile/mod changes and after deployment
-or purge; **Refresh checks** also reruns it after changes made outside Vortex.
-Status badges show which items are ready. Expand **Check details** for diagnostics.
+or purge; **Refresh status** also reruns it after changes made outside Vortex.
+Status badges show which items are ready. Expand **Details** for diagnostics.
 Updating to 0.1.4 prevents repeated Vortex initialization from adding duplicate pages;
 restart Vortex after installing the extension. From 0.1.5, startup also forgets
 duplicate saved entries for this extension at the same folder, retaining the
@@ -102,7 +102,20 @@ The **Optional tools and mods** section contains:
 - [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
   recommended, optional intro-video replacements.
 
-Each unfulfilled check has an **View on Nexus Mods** action for its author's Nexus page.
+Each unfulfilled item has a **Download with Vortex** button and a secondary
+**Mod page** link. The download button asks the Nexus API for current main files,
+selects a unique primary release, or displays a file picker inside Vortex. It uses
+Vortex's normal download queue and your connected Nexus account. Premium members
+can usually download directly; free accounts may require Nexus's website
+authorization unless the author permits direct downloads. The extension cannot
+remove that Nexus requirement.
+
+Downloads do not install, enable, or deploy mods automatically. Install completed
+mod downloads through **Downloads**, enable them, then deploy. Save Editor is
+restricted to remaster **3.x** main files and downloads as a standalone tool:
+extract its complete archive to the portable tool folder described above, or
+configure it in **Dashboard > Tools**. Download completion alone does not make an
+item ready.
 Optional items do not block modding and are never installed or run automatically.
 The editor check validates the configured or portable executable; the F2 Console
 and No Logos checks inspect managed mods enabled in the active profile. Manually
@@ -110,7 +123,7 @@ installed copies of those recommended mods cannot be identified by their metadat
 
 The checks also register with Vortex's native health-check engine when its API is
 available. The inspected built-in **Health check** view only renders its own
-dependency-report providers, so this extension supplies **Amalur health checks**
+dependency-report providers, so this extension supplies **Amalur Essentials**
 to make all four custom checks visible. Mod Framework's separate required-dependency
 rule remains in place for framework mods. Updating from 0.1.2 dismisses the old setup
 notification cards.

@@ -195,3 +195,24 @@ folder, and removal could delete the current installed files on restart.
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/extension_manager/installExtension.ts
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/reducers/app.ts
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/actions/app.ts
+
+## Essentials downloads through Vortex (0.1.6)
+
+The custom page is named Amalur Essentials to distinguish it from Vortex's native
+Health check. Public registerHealthCheck descriptors and stable IDs are retained.
+
+Vortex's existing script-extender downloader and Stardew Valley SMAPI downloader
+use api.ext.ensureLoggedIn, api.ext.nexusGetModFiles(gameId, modId), then
+start-download with an nxm:// game/mod/file URL and allowInstall:false. Essentials
+uses the same flow, with current main-file selection and a native dialog for
+ambiguous releases. Save Editor candidates must have a remaster 3.x version.
+
+NxmProtocol handles account membership and the author's direct_download_enabled
+flag. Keyless links for free accounts can require website authorization; the
+extension delegates this to Vortex and does not promise a browser-free flow for
+every Nexus account. Tools are downloaded without automatic mod installation.
+
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/extensions/script-extender-installer/src/nexusModsDownloader.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/extensions/games/game-stardewvalley/src/smapi/download.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/nexus_integration/nxmProtocol.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/nexus_integration/eventHandlers.ts

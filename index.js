@@ -19,7 +19,7 @@ function main(context) {
   context.requireVersion('>=1.9.0');
   const checks = createHealthChecks(fs, util);
   for (const check of checks) context.optional.registerHealthCheck(check);
-  context.registerMainPage('health-check', 'Amalur health checks', createHealthPage(checks, context.api, MainPage), {
+  context.registerMainPage('health-check', 'Amalur Essentials', createHealthPage(checks, context.api, MainPage), {
     id: 'amalur-health-checks',
     group: 'per-game',
     priority: 61,

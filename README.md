@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.6.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.7.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -90,9 +90,11 @@ execute DLLs or establish in-game compatibility.
 The **Optional tools and mods** section contains:
 
 - [Save Editor (mod 8)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/8):
-  an optional standalone tool. Download the remaster **3.x** release separately and
-  extract its complete distribution into `<game>/tools/KoAR.SaveEditor/`, with
-  `KoAR.SaveEditor.exe` directly in that folder. The extension detects this location
+  an optional standalone tool. Use **Download & install** in Amalur Essentials
+  to put the full remaster **3.x** distribution into `<game>/tools/KoAR.SaveEditor/`
+  and link its executable in **Dashboard > Tools**. For a completed archive already
+  downloaded in Vortex, use **Install downloaded copy** on the same card.
+  Manual extraction into that folder remains supported. The extension detects this location
   for Vortex's Dashboard tools. For another location, configure the executable in
   **Dashboard > Tools**. It remains optional and never replaces the game launcher.
   The binary is not bundled: the Nexus author prohibits reuploads. Follow the
@@ -102,21 +104,27 @@ The **Optional tools and mods** section contains:
 - [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
   recommended, optional intro-video replacements.
 
-Each unfulfilled item has a **Download with Vortex** button and a secondary
-**Mod page** link. The download button asks the Nexus API for current main files,
+Missing mods have a **Download with Vortex** button; Save Editor has
+**Download & install**. Each also has a secondary **Mod page** link. The download button asks the Nexus API for current main files,
 selects a unique primary release, or displays a file picker inside Vortex. It uses
 Vortex's normal download queue and your connected Nexus account. Premium members
 can usually download directly; free accounts may require Nexus's website
 authorization unless the author permits direct downloads. The extension cannot
 remove that Nexus requirement.
 
-Downloads do not install, enable, or deploy mods automatically. Install completed
-mod downloads through **Downloads**, enable them, then deploy. Save Editor is
-restricted to remaster **3.x** main files and downloads as a standalone tool:
-extract its complete archive to the portable tool folder described above, or
-configure it in **Dashboard > Tools**. Download completion alone does not make an
-item ready.
-Optional items do not block modding and are never installed or run automatically.
+The mod download buttons do not install, enable, or deploy mods automatically.
+Install completed mod downloads through **Downloads**, enable them, then deploy.
+Save Editor instead has an explicit **Download & install** action and
+an **Install downloaded copy** action for completed Nexus mod 8 downloads.
+The installer verifies the actual file is remaster **3.x**, preserves companion
+DLLs, resources and documentation, and registers the executable and working
+directory as a tool. It does not create a managed mod, require deployment, or
+change the primary game launcher. When replacing an existing tool folder, the
+previous folder is retained beside it as `.KoAR.SaveEditor-backup-…`, including
+user settings. Download completion alone does not make an item ready.
+
+Optional items do not block modding. Save Editor installation happens only after
+an explicit install action; tools are never launched automatically.
 The editor check validates the configured or portable executable; the F2 Console
 and No Logos checks inspect managed mods enabled in the active profile. Manually
 installed copies of those recommended mods cannot be identified by their metadata.

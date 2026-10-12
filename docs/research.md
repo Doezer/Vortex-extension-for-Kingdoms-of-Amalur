@@ -216,3 +216,27 @@ every Nexus account. Tools are downloaded without automatic mod installation.
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/extensions/games/game-stardewvalley/src/smapi/download.ts
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/nexus_integration/nxmProtocol.ts
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/nexus_integration/eventHandlers.ts
+
+## Standalone Save Editor installation (0.1.7)
+
+The user's explicit Save Editor install action downloads or reuses a completed
+Nexus mod 8 archive, verifies its file ID against remaster 3.x metadata, and installs
+it under the discovered game's tools/KoAR.SaveEditor folder. This is a standalone
+tool workflow, not a mod installer/deployment side effect. The default mod archive
+installer still rejects unrelated executables.
+
+Vortex's public selectors.downloadPathForGame resolves custom download locations.
+Its exported util.SevenZip uses the Nexus-Mods/node-7z fork: list reports entries
+through the progress callback; extractFull resolves a code/errors result. The
+installer validates paths before extraction, checks the extracted tree and full
+file list, then promotes the prepared folder. Updates retain the old folder in a
+sibling backup; a failed promotion attempts to restore it. No author binary is
+bundled or redistributed.
+
+Public actions.addDiscoveredTool and setToolVisible register the executable and
+working directory. The supported-tool definition still discovers manual installs.
+No primary-tool action, mod enablement, or deployment is triggered.
+
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/download_management/selectors.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/gamemode_management/actions/settings.ts
+- https://github.com/Nexus-Mods/node-7z/blob/b75def8d0d7d81a03f4526c52b8ada9a34a06479/lib/index.d.ts

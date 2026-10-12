@@ -18,7 +18,7 @@ test('distribution ZIP is repeatable, self-contained, and loadable by the host',
   execFileSync(process.execPath, ['scripts/build.js'], { cwd: root });
   assert.deepEqual(await fs.readFile(archivePath), first);
   const entries = unzipSync(first);
-  assert.deepEqual(Object.keys(entries).sort(), ['LICENSE', 'README.md', 'gameart.svg', 'index.js', 'info.json', 'lib/discovery.js', 'lib/installer.js', 'lib/integration.js', 'lib/health.js', 'lib/healthPage.js'].sort());
+  assert.deepEqual(Object.keys(entries).sort(), ['LICENSE', 'README.md', 'gameart.svg', 'index.js', 'info.json', 'lib/discovery.js', 'lib/installer.js', 'lib/integration.js', 'lib/health.js', 'lib/healthPage.js', 'lib/saveEditor.js'].sort());
   const extracted = await fs.mkdtemp(path.join(os.tmpdir(), 'amalur-package-'));
   t.after(() => fs.rm(extracted, { recursive: true, force: true }));
   for (const [filename, content] of Object.entries(entries)) {

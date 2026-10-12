@@ -50,7 +50,16 @@ file list and the author's instructions before extending the routing rules.
     Confirm the correct main file enters Downloads with Nexus metadata; install,
     enable, and deploy it, then confirm the status updates. Test Premium and free
     accounts: website authorization may still be required for a free account.
-15. Download Save Editor. Confirm only a remaster 3.x main file is offered and no
-    automatic mod installation occurs. Extract/configure the tool, then refresh.
+15. Use Save Editor **Download & install**. Confirm only a remaster 3.x main file
+    is offered, the full archive is installed in tools/KoAR.SaveEditor under the
+    game folder, and Dashboard > Tools launches it with that working directory.
+    No managed mod or deployment should be required. Also test **Install downloaded
+    copy** with an existing completed Nexus mod 8 download.
 16. Cancel file selection or Nexus authorization and retry. Confirm the button
     becomes available again. Confirm the secondary Mod page link still works.
+
+17. Replace an existing Save Editor installation. Confirm the previous folder and
+    user settings remain in a sibling backup folder. Test a corrupt archive and
+    verify the previous installed tool is preserved and no success is reported.
+18. Change mod profiles or purge mods. Confirm the standalone Save Editor remains
+    installed and linked. Confirm the game launcher is still the primary tool.

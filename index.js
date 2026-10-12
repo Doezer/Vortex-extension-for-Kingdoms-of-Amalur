@@ -7,6 +7,7 @@ const { findGame } = require('./lib/discovery');
 const { withFrameworkRequirement, saveEditorTool, duplicateExtensionRecords } = require('./lib/integration');
 const { createHealthChecks } = require('./lib/health');
 const { createHealthPage } = require('./lib/healthPage');
+const { createSaveEditorActions } = require('./lib/saveEditor');
 const info = require('./info.json');
 
 const GAME_ID = 'kingdomsofamalurrereckoning';
@@ -17,7 +18,7 @@ let initialized = false;
 function main(context) {
   if (initialized) return true;
   context.requireVersion('>=1.9.0');
-  const checks = createHealthChecks(fs, util);
+  const checks = createHealthChecks(fs, util, createSaveEditorActions(context.api, selectors, actions, util));
   for (const check of checks) context.optional.registerHealthCheck(check);
   context.registerMainPage('health-check', 'Amalur Essentials', createHealthPage(checks, context.api, MainPage), {
     id: 'amalur-health-checks',

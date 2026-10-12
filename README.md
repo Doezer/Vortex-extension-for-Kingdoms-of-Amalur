@@ -6,7 +6,7 @@ The original 2012 Reckoning is not supported.
 
 ## Installation
 
-1. Download the ZIP from [Releases](https://github.com/Doezer/Vortex-extension-for-Kingdoms-of-Amalur/releases/latest).
+1. [Download the latest extension ZIP](https://github.com/Doezer/Vortex-extension-for-Kingdoms-of-Amalur/releases/latest/download/game-kingdomsofamalurrereckoning.zip).
 2. Drop it onto **Extensions → Drop File(s)** in Vortex, then restart Vortex.
 3. Find **Kingdoms of Amalur: Re-Reckoning** in **Games** and click **Manage**.
 4. If the game isn't found, select the folder containing `koa.exe` and `data/initial_0.pak`.

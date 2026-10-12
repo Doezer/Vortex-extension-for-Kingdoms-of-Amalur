@@ -2,6 +2,11 @@ name: Publish release
 
 on:
   workflow_dispatch:
+    inputs:
+      attach_to_existing_release:
+        description: Add the stable download filename to the current version's existing release
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -25,12 +30,26 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          ATTACH_EXISTING: ${{ inputs.attach_to_existing_release }}
         shell: bash
         run: |
           set -euo pipefail
           release_version="$(node -p 'require("./info.json").version')"
+          stable_zip="dist/game-kingdomsofamalurrereckoning.zip"
+          if [[ "$ATTACH_EXISTING" == "true" ]]; then
+            # Preserve the already-published package exactly when backfilling.
+            gh release download "v${release_version}" \
+              --pattern "game-kingdomsofamalurrereckoning-${release_version}.zip" \
+              --dir dist/published
+            cp "dist/published/game-kingdomsofamalurrereckoning-${release_version}.zip" "$stable_zip"
+            gh release upload "v${release_version}" "$stable_zip" --clobber
+            gh release edit "v${release_version}" --latest
+            exit 0
+          fi
+          cp "dist/game-kingdomsofamalurrereckoning-${release_version}.zip" "$stable_zip"
           gh release create "v${release_version}" \
             "dist/game-kingdomsofamalurrereckoning-${release_version}.zip" \
+            "$stable_zip" \
             --target "$GITHUB_SHA" \
             --title "v${release_version} — Vortex extension" \
             --notes-file CHANGELOG.md \

@@ -1,0 +1,27 @@
+name: Publish Nexus header
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Attach header files to the current release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(node -p 'require("./info.json").version')"
+          gh release upload "v${release_version}" \
+            assets/nexus-header-1300x372.png \
+            assets/nexus-header-1300x372.jpg \
+            --clobber

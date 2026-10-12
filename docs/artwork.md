@@ -10,3 +10,11 @@ Vortex's packaging guide. No generated artwork, added text or altered scene is u
 
 The screenshot remains the property of its respective rights holders and is not
 covered by the extension code's MIT license.
+
+## Nexus page header
+
+The 1300×372 header in `assets/` combines Steam's official
+[library hero artwork](https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1041720/library_hero.jpg)
+and [game logo](https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1041720/logo.png),
+with a “Vortex Extension” subtitle. PNG and JPG exports are available.
+These page assets are not included in the extension ZIP.

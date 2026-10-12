@@ -44,7 +44,7 @@ function main(context) {
     id: GAME_ID,
     name: 'Kingdoms of Amalur: Re-Reckoning',
     shortName: 'KOA: RR',
-    logo: 'gameart.svg',
+    logo: 'gameart.png',
     executable: () => 'koa.exe',
     requiredFiles: ['koa.exe', path.join('data', 'initial_0.pak')],
     queryPath: () => findGame(util.GameStoreHelper),

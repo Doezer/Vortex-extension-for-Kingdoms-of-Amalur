@@ -1,186 +1,60 @@
-# Kingdoms of Amalur: Re-Reckoning — Vortex extension
+# Kingdoms of Amalur: Re-Reckoning for Vortex
 
-Vortex game support for the Windows PC remaster, **Re-Reckoning**, including
-Fatesworn installations. Requires Vortex **1.9 or newer**. It does not support
-the original 2012 Reckoning. See the [changelog](CHANGELOG.md) for release features.
+Install and manage mods for the Windows remaster with Vortex 1.9 or newer.
+Supports Steam, GOG and Epic installations, including Fatesworn.
+The original 2012 Reckoning is not supported.
 
-## Install the extension
+## Installation
 
-1. Download the extension ZIP from [GitHub Releases](https://github.com/Doezer/Vortex-extension-for-Kingdoms-of-Amalur/releases/latest), or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-1.0.0.zip`
-   onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
-3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
-4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
-   select the game folder containing `koa.exe` and `data/initial_0.pak`.
-5. Use a staging folder on the same drive as the game and Vortex's **Hardlink Deployment**.
-   Import a supported mod archive in the Mods tab, enable it, and deploy.
+1. Download the ZIP from [Releases](https://github.com/Doezer/Vortex-extension-for-Kingdoms-of-Amalur/releases/latest).
+2. Drop it onto **Extensions → Drop File(s)** in Vortex, then restart Vortex.
+3. Find **Kingdoms of Amalur: Re-Reckoning** in **Games** and click **Manage**.
+4. If the game isn't found, select the folder containing `koa.exe` and `data/initial_0.pak`.
 
-Discovery IDs are Steam `1041720`, GOG `1077045575`, and Epic
-`b8aa8afb7da84da3a978425ec4b8e5cd`. Store discovery is tested against API doubles;
-these stores and live installations are not present in the development environment.
-The original game's Steam ID `102500` is deliberately excluded.
+Keep your mod staging folder on the same drive as the game and use **Hardlink Deployment**.
+Install mods in Vortex, enable them, then deploy.
 
-## Supported mod layouts
+To update the extension, drop the new ZIP into Extensions and restart.
+Duplicate entries for the same installation folder are cleaned up automatically.
 
-An archive can wrap its payload in one or more folders. The installer removes
-the wrapper only when its intended game-relative layout is unambiguous.
-Slash and backslash archive paths and capitalized `Data`/`Mods` folders are accepted.
+## Supported mods
 
-| Archive content | Deployed relative to the game folder | Notes |
-| --- | --- | --- |
-| `patch_0.pak` | `data/patch_0.pak` | Filename is preserved; no invented PAK load order. |
-| `My Mod/data/patch_0.pak` | `data/patch_0.pak` | Replacement game archives, including `initial_0.pak`. |
-| `data/videos/intro.bik` | `data/videos/intro.bik` | Video and other explicitly packaged data replacements. |
-| `mods/example.json`, `mods/example.lua` | Same paths | Requires the appropriate Mod Framework version. |
-| `example.json`, `example.lua` | `mods/example.json`, `mods/example.lua` | Bare JSON must contain a `scripts` or `patches` array. |
-| `Gems.lua`, `Smith.lua` | `mods/Gems.lua`, `mods/Smith.lua` | Console scripts still need the author's console/framework dependency. |
-| `dinput8.dll`, `re_mod.dll`, `mods/...`, `scripts/...` | Same paths | Framework distribution: preserve all accompanying runtime files. |
-| `DINPUT8.dll`, `AmalurCoop/config.ini` | Same paths | Loader and accompanying configuration; does not supply a multiplayer mod. |
-| `Pure Amalur.ini` | `Pure Amalur.ini` | Identified by ReShade preset keys, not filename alone. |
-| `dxgi.dll`, `ReShade.ini`, `reshade-shaders/...` | Same paths | Preserves shader/texture directories and accompanying presets. |
+- Replacement PAKs, installed into `data/`.
+- Packages containing `data/`, including video replacements.
+- Mod Framework packages, JSON manifests and Lua scripts.
+- ReShade presets and packages with their shaders and textures.
+- Wrapped archives such as KOA Reforged.
 
-Install [Mod Framework](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/9)
-before dependent framework mods.
+Framework mods require [Mod Framework 1.4 or newer](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/9).
+Vortex adds that dependency when installing them. PAK replacements, video mods and ReShade do not need it.
+For ReShade presets, install ReShade separately as directed by the mod author.
 
-Installing a package with a `mods/` payload adds a
-Vortex **requires** rule for Mod Framework 1.4 or newer. The reference points to
-Nexus mod 9, main file 39 (1.4); a newer installed framework can satisfy the version
-range. Vortex handles dependency resolution and its normal download/login flow.
-The framework distribution itself is exempt to avoid a circular dependency.
-PAK replacements, video replacements, and ReShade packages do not require it.
-Install and enable the framework through Vortex, rather than
-only copying its DLLs manually, so the managed dependency can be recognized.
+If two mods replace the same PAK or DLL, choose a winner using Vortex's conflict rules.
+PAK contents aren't merged. For archives containing several variants, select one and repackage it before installation.
+Saves, trainers and unrelated executable installers need manual installation.
 
-The framework scans JSON and DLL plugins directly
-inside `mods/`; nested manifest/plugin folders are rejected instead of installing
-files the framework will not load. Bare Lua scripts do not run automatically.
-For bare manifests, bundled Lua scripts are installed at the game-relative paths
-declared in the JSON (for example `mods/example.lua` or `scripts/example.lua`).
-The installer does not rewrite the JSON. Ambiguous script matches are refused.
-References to scripts absent from the archive are left for the author's separately
-installed dependencies. Explicit game-relative packages preserve their paths.
+## Amalur Essentials
 
-Install ReShade separately following the preset author's instructions, then select
-the deployed preset in the ReShade overlay. Installing a preset does not install
-ReShade or download missing shader dependencies. Injector DLLs recognized as root
-markers are `dinput8.dll`, `re_mod.dll`, `dxgi.dll`, `d3d11.dll`, and `d3d9.dll`.
+Open **Amalur Essentials** in the sidebar to check Mod Framework and download optional additions:
 
-## Optional tools and recommendations
+- **Save Editor:** installs the remaster 3.x version into `<game>/tools/KoAR.SaveEditor/` and links it in **Dashboard → Tools**. Use **Install downloaded copy** if its archive is already in Vortex. Updates keep the previous folder as a backup.
+- **F2 Console:** an optional in-game console that also needs Mod Framework.
+- **No Logos:** an optional mod to skip the startup logos.
 
-Open **Amalur Essentials** in Vortex's sidebar while managing Re-Reckoning.
-All setup checks and optional recommendations appear here, without startup or
-setup notifications. The page refreshes on profile/mod changes and after deployment
-or purge; **Refresh status** also reruns it after changes made outside Vortex.
-Status badges show which items are ready. Expand **Details** for diagnostics.
-The extension registers its page once and cleans duplicate saved entries at the
-same installation folder, retaining the current version. Manual ZIP installation overwrites files but Vortex creates a
-new saved entry; do not remove individual old entries sharing that folder.
+Mod downloads still need installation, enablement and deployment through Vortex.
+Save Editor is a standalone tool and doesn't need deployment.
+Nexus may require browser authorization for downloads on free accounts.
 
-**Mod Framework** appears under **Mod framework**. Its check verifies
-that `dinput8.dll` and `re_mod.dll` are files with nonzero size in the game folder.
-For a managed Nexus mod 9 installation, it also checks whether the mod is enabled
-in the active profile and whether a recognized version is below 1.4. Filesystem
-access errors are reported as errors, not as a missing mod. These checks do not
-execute DLLs or establish in-game compatibility.
+## Troubleshooting
 
-The **Optional tools and mods** section contains:
+Use **Refresh status** in Essentials after making changes outside Vortex.
+An archive rejected by the installer shows its reason in Vortex; details are also logged in `vortex.log`.
+Purge mods before a game update or store repair, then redeploy compatible versions.
+Back up your saves before editing them.
 
-- [Save Editor (mod 8)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/8):
-  an optional standalone tool. Use **Download & install** in Amalur Essentials
-  to put the full remaster **3.x** distribution into `<game>/tools/KoAR.SaveEditor/`
-  and link its executable in **Dashboard > Tools**. For a completed archive already
-  downloaded in Vortex, use **Install downloaded copy** on the same card.
-  Manual extraction into that folder remains supported. The extension detects this location
-  for Vortex's Dashboard tools. For another location, configure the executable in
-  **Dashboard > Tools**. It remains optional and never replaces the game launcher.
-  The binary is not bundled: the Nexus author prohibits reuploads. Follow the
-  author's save-editing instructions and back up the save you intend to edit.
-- [F2 Console (mod 14)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/14):
-  recommended, optional in-game console. F2 Console itself needs Mod Framework.
-- [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
-  recommended, optional intro-video replacements.
+## Development
 
-Missing mods have a **Download with Vortex** button; Save Editor has
-**Download & install**. Each also has a secondary **Mod page** link. The download button asks the Nexus API for current main files,
-selects a unique primary release, or displays a file picker inside Vortex. It uses
-Vortex's normal download queue and your connected Nexus account. Premium members
-can usually download directly; free accounts may require Nexus's website
-authorization unless the author permits direct downloads. The extension cannot
-remove that Nexus requirement.
-
-The mod download buttons do not install, enable, or deploy mods automatically.
-Install completed mod downloads through **Downloads**, enable them, then deploy.
-Save Editor instead has an explicit **Download & install** action and
-an **Install downloaded copy** action for completed Nexus mod 8 downloads.
-The installer verifies the actual file is remaster **3.x**, preserves companion
-DLLs, resources and documentation, and registers the executable and working
-directory as a tool. It does not create a managed mod, require deployment, or
-change the primary game launcher. When replacing an existing tool folder, the
-previous folder is retained beside it as `.KoAR.SaveEditor-backup-…`, including
-user settings. Download completion alone does not make an item ready.
-
-Optional items do not block modding. Save Editor installation happens only after
-an explicit install action; tools are never launched automatically.
-The editor check validates the configured or portable executable; the F2 Console
-and No Logos checks inspect managed mods enabled in the active profile. Manually
-installed copies of those recommended mods cannot be identified by their metadata.
-
-The checks also register with Vortex's native health-check engine when its API is
-available. The inspected built-in **Health check** view only renders its own
-dependency-report providers, so this extension supplies **Amalur Essentials**
-to make all four custom checks visible. Mod Framework's separate required-dependency
-rule remains in place for framework mods.
-
-## Conflicts, disabling, and game updates
-
-Vortex manages staging, deployment, backups of replaced files, and purge. The
-mod installer returns installation instructions without editing game archives.
-The standalone Save Editor installer writes only its tool folder and update backups. Back up files you modified manually before
-first deployment, and resolve any Vortex **external changes** prompt deliberately.
-
-Two mods replacing `data/patch_0.pak` conflict as **whole files**. Pick a winner in
-Vortex's conflict rules. The extension does not merge their internal assets:
-choosing one means the other's changes inside that PAK are not applied.
-The same applies to different mods supplying `dinput8.dll` or other shared targets.
-To combine such mods, use an author-provided compatibility package or their manual
-merging instructions. Optional variants in one archive are rejected; select one
-variant and repackage its game-relative payload before import.
-
-Disable a mod and deploy to remove it. **Purge Mods** removes deployed files and
-lets Vortex restore its originals. Purge before updating the game or verifying its
-files in a store, then reinstall compatible mods and deploy again. A replacement
-PAK must match your game's version/DLC; the extension cannot verify that compatibility.
-
-## Manual-only and delegated formats
-
-- Trainers, save-game downloads, patching programs and unrelated executable
-  installers are refused. Install/use these manually as instructed. Use the
-  dedicated Save Editor action in **Amalur Essentials** for the supported tool.
-- Raw DDS/BIN assets without a game-relative `data/` layout need the author's
-  PAK rebuilding procedure. The extension does not execute `pakfilebuilder.exe`.
-- Original-game `bigs/` packages are not remaster packages.
-- Unrecognized archives are refused rather than handed to Vortex's generic copy
-  installer. Use a game-relative `data/` or `mods/` package when its location is known.
-- Scripted FOMOD packages are delegated to Vortex's FOMOD installer. Their script,
-  dependencies, and paths remain the mod author's responsibility. This route has
-  not been validated with a published Re-Reckoning FOMOD archive.
-
-Documentation, screenshots, and common archive metadata are excluded from mod
-deployment. The extension validates paths and rejects traversal, drive/UNC paths,
-Windows reserved filenames, and destination collisions before returning copy instructions.
-Named documentation may have a mod-name prefix, such as `KOA_Reforged_README.md`.
-Rejected layouts display the reason in a **Cannot install this Amalur mod** error
-notification and log it in `vortex.log` under `[amalur] Mod archive rejected`.
-Full root-loader packages preserve their companions, but packages containing
-executables or scripts that require manual execution are refused.
-
-## Development and CI
-
-Use Node.js **22 or 24** and npm. Vortex supplies `vortex-api` at runtime; it must
-not be installed or bundled from npm. Vortex also supplies React for the health
-page. Development dependencies are pinned in `package-lock.json`: `fflate` creates
-ZIP distributions, while React and its test renderer exercise the health page.
-Neither React nor any development dependencies are included in the ZIP.
+Use Node.js 22 or 24:
 
 ```sh
 npm ci --ignore-scripts
@@ -189,25 +63,8 @@ npm test
 npm run build
 ```
 
-The ZIP is written to `dist/` with `index.js` and `info.json` at its top level.
-It includes the local installer/discovery modules, README, changelog, license, and an original
-SVG fallback tile. It includes no mod/game assets or development dependencies.
-Packaging is deterministic and checks a byte-for-byte ZIP round trip.
+The installable ZIP is written to `dist/`. CI runs on Windows and Linux.
+See the [changelog](CHANGELOG.md), [guide verification](docs/verification.md), and [Windows testing checklist](docs/live-validation.md).
 
-GitHub Actions runs syntax/metadata checks, tests, and packaging on Windows and
-Linux with Node 22 and 24, and uploads the installable ZIP as an artifact.
-Regular CI does not publish releases. The manually triggered **Publish release**
-workflow validates and builds the selected commit, then publishes its ZIP as the
-latest stable GitHub release using [CHANGELOG.md](CHANGELOG.md).
-Neither workflow uploads anything to Nexus Mods.
-
-Tests exercise the actual entry point with a small Vortex API double, the real
-installer/discovery modules, extracted-file reads, temporary staging files,
-conflict targets, a simulated host deployment/purge lifecycle, and the packaged
-ZIP. Test payloads are synthetic and follow the published layouts; they are not
-downloaded third-party mod archives. See [research notes](docs/research.md) for
-sources and [the live validation checklist](docs/live-validation.md). Automated
-checks do not launch the game or Save Editor, or execute mod DLLs.
-The KOA Reforged regression fixture contains only filenames from the user-supplied
-1.3.5 archive, with no third-party scripts or assets. That archive was also checked
-locally for complete staging without altering its 35 payload files.
+The game thumbnail is an [official Steam screenshot](docs/artwork.md).
+Game imagery belongs to its respective rights holders; the extension code is MIT licensed.

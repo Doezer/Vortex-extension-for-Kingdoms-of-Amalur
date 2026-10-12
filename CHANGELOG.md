@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 — Packaging compliance
+
+- Use an official Steam screenshot as the required text-free 640×360 `gameart.png` thumbnail.
+- Match `info.json.name` to the game's display name.
+- Shorten the README to installation, supported mods, Essentials and troubleshooting.
+- Verify the published ZIP against the official packaging and testing guides.
+
 ## 1.0.0 — Initial release
 
 Vortex support for **Kingdoms of Amalur: Re-Reckoning** on Windows, including Fatesworn installations.
@@ -19,7 +26,7 @@ Vortex support for **Kingdoms of Amalur: Re-Reckoning** on Windows, including Fa
 
 Requires **Vortex 1.9 or newer** and the PC remaster; the original 2012 Reckoning is not supported.
 
-Drop `game-kingdomsofamalurrereckoning-1.0.0.zip` into **Extensions**, restart Vortex, then manage Re-Reckoning from **Games**. Use **Amalur Essentials** to review the setup and download optional additions.
+Drop `game-kingdomsofamalurrereckoning-1.0.1.zip` into **Extensions**, restart Vortex, then manage Re-Reckoning from **Games**. Use **Amalur Essentials** to review the setup and download optional additions.
 
 Mod Framework, Save Editor and recommended mods are downloaded separately from their authors. No third-party mod, tool or game binaries are bundled.
 

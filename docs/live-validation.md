@@ -1,4 +1,4 @@
-# Live validation before releasing 1.0
+# Live Windows validation
 
 Automated installer tests cannot establish game runtime compatibility. Keep
 `final: false` until these checks have passed on a real Windows PC with Vortex.
@@ -42,24 +42,24 @@ archive tree, and results. Obtain the mods from their authors; none are bundled 
     Confirm there are no setup/recommendation notifications and the page is hidden
     when another game is active.
 
-Published archive contents and live game loading have not yet been verified in
+Automated ZIP contents are verified; live game loading is not verified in
 this cloud workspace. If a package does not match a supported layout, collect its
 file list and the author's instructions before extending the routing rules.
 
-14. In **Amalur Essentials**, use **Download with Vortex** for a missing mod.
+12. In **Amalur Essentials**, use **Download with Vortex** for a missing mod.
     Confirm the correct main file enters Downloads with Nexus metadata; install,
     enable, and deploy it, then confirm the status updates. Test Premium and free
     accounts: website authorization may still be required for a free account.
-15. Use Save Editor **Download & install**. Confirm only a remaster 3.x main file
+13. Use Save Editor **Download & install**. Confirm only a remaster 3.x main file
     is offered, the full archive is installed in tools/KoAR.SaveEditor under the
     game folder, and Dashboard > Tools launches it with that working directory.
     No managed mod or deployment should be required. Also test **Install downloaded
     copy** with an existing completed Nexus mod 8 download.
-16. Cancel file selection or Nexus authorization and retry. Confirm the button
+14. Cancel file selection or Nexus authorization and retry. Confirm the button
     becomes available again. Confirm the secondary Mod page link still works.
 
-17. Replace an existing Save Editor installation. Confirm the previous folder and
+15. Replace an existing Save Editor installation. Confirm the previous folder and
     user settings remain in a sibling backup folder. Test a corrupt archive and
     verify the previous installed tool is preserved and no success is reported.
-18. Change mod profiles or purge mods. Confirm the standalone Save Editor remains
+16. Change mod profiles or purge mods. Confirm the standalone Save Editor remains
     installed and linked. Confirm the game launcher is still the primary tool.

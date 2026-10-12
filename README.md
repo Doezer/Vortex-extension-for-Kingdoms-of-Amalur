@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.3.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.4.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -73,15 +73,18 @@ Open **Amalur health checks** in Vortex's sidebar while managing Re-Reckoning.
 All setup checks and optional recommendations appear here, without startup or
 setup notifications. The page refreshes on profile/mod changes and after deployment
 or purge; **Refresh checks** also reruns it after changes made outside Vortex.
+Status badges show which items are ready. Expand **Check details** for diagnostics.
+Updating to 0.1.4 prevents repeated Vortex initialization from adding duplicate pages;
+restart Vortex after replacing the extension.
 
-**Mod Framework** appears under **Required for framework mods**. Its check verifies
+**Mod Framework** appears under **Mod framework**. Its check verifies
 that `dinput8.dll` and `re_mod.dll` are files with nonzero size in the game folder.
 For a managed Nexus mod 9 installation, it also checks whether the mod is enabled
 in the active profile and whether a recognized version is below 1.4. Filesystem
 access errors are reported as errors, not as a missing mod. These checks do not
 execute DLLs or establish in-game compatibility.
 
-The **Optional suggestions** section contains:
+The **Optional tools and mods** section contains:
 
 - [Save Editor (mod 8)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/8):
   an optional standalone tool. Download the remaster **3.x** release separately and
@@ -96,7 +99,7 @@ The **Optional suggestions** section contains:
 - [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
   recommended, optional intro-video replacements.
 
-Each unfulfilled check has an **Open … page** action for its author's Nexus page.
+Each unfulfilled check has an **View on Nexus Mods** action for its author's Nexus page.
 Optional items do not block modding and are never installed or run automatically.
 The editor check validates the configured or portable executable; the F2 Console
 and No Logos checks inspect managed mods enabled in the active profile. Manually

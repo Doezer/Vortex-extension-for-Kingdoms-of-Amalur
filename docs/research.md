@@ -152,3 +152,28 @@ checks report informational suggestions; browser actions never mark an installat
 healthy by themselves. Tests exercise real temporary filesystem changes and the
 React page's refresh, action, and subscription cleanup behavior. React is supplied
 by Vortex at runtime; test dependencies are not redistributed in the extension ZIP.
+
+## Duplicate initialization and custom page revision (0.1.4)
+
+The supplied October 12 Vortex log shows the same extension path initialized once
+with 0.1.0, twice after 0.1.1, three times after 0.1.2, and four times after 0.1.3.
+Only one module-load log precedes those repeated calls. This accounts for the four
+sidebar entries; it does not independently prove the cause of the navigation freeze.
+The network log reports unrelated Nexus requests, not an Amalur page failure.
+
+Vortex v2.8.1 ExtensionManager loads persisted extension records before directory
+scanning. Each record can resolve to the same cached module. initExtensions then
+calls its default initializer for every record. The extension now guards its entire
+initializer, rather than only the page: repeated calls must not register duplicate
+games, installers, checks, or event handlers either. A test exercises four calls
+with separate contexts to the same module and checks registration counts.
+
+Source references:
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/ExtensionManager.ts
+- https://github.com/Nexus-Mods/Vortex/wiki/MODDINGWIKI-Developers-General-Adding-a-main-page
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/views/MainPage.tsx
+
+The page uses the documented legacy MainPage shell within Vortex's page container,
+with an explicit body scroll area. Hidden pages unsubscribe from refresh events;
+request generations discard results after navigation/unmount. Optional suggestions
+remain visible without notifications and detailed diagnostics are collapsed.

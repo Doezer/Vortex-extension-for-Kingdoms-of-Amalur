@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { fs, util, log, selectors } = require('vortex-api');
+const { fs, util, log, selectors, MainPage } = require('vortex-api');
 const { planInstall, isFomod, readEntries } = require('./lib/installer');
 const { findGame } = require('./lib/discovery');
 const { withFrameworkRequirement, saveEditorTool } = require('./lib/integration');
@@ -10,16 +10,20 @@ const { createHealthPage } = require('./lib/healthPage');
 const info = require('./info.json');
 
 const GAME_ID = 'kingdomsofamalurrereckoning';
+// Vortex can retain multiple extension records pointing at this same module
+// after ZIP upgrades. Its require cache is shared, but it calls main per record.
+let initialized = false;
 
 function main(context) {
+  if (initialized) return true;
   context.requireVersion('>=1.9.0');
   const checks = createHealthChecks(fs, util);
   for (const check of checks) context.optional.registerHealthCheck(check);
-  context.registerMainPage('health-check', 'Amalur health checks', createHealthPage(checks, context.api), {
+  context.registerMainPage('health-check', 'Amalur health checks', createHealthPage(checks, context.api, MainPage), {
     id: 'amalur-health-checks',
     group: 'per-game',
     priority: 61,
-    visible: () => selectors.activeGameId(context.api.store.getState()) === GAME_ID,
+    visible: () => context.api.store !== undefined && selectors.activeGameId(context.api.store.getState()) === GAME_ID,
   });
   context.once(() => {
     for (const id of ['amalur-mod-framework-required', 'amalur-save-editor-suggestion', 'amalur-recommended-mods']) context.api.dismissNotification(id);
@@ -85,6 +89,7 @@ function main(context) {
       }
     },
   );
+  initialized = true;
   return true;
 }
 

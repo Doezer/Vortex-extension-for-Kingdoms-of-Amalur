@@ -161,7 +161,7 @@ test('health page renders all items, opens a selected author page, and refreshes
     await renderer.act(async () => { view = renderer.create(React.createElement(Page, { active: true })); });
     assert.equal(view.root.findAllByType('article').length, 4);
     assert.match(view.root.findAllByProps({ role: 'status' })[0].children.join(''), /missing/);
-    const editorAction = view.root.findAllByType('button').find((button) => button.children.join('') === 'Open Save Editor page');
+    const editorAction = view.root.findByProps({ 'aria-label': 'Open Save Editor page' });
     await renderer.act(async () => { await editorAction.props.onClick(); });
     assert.equal(extension.opened.at(-1), `https://www.nexusmods.com/${GAME}/mods/8`);
     present.add('dinput8.dll');
@@ -176,4 +176,65 @@ test('health page renders all items, opens a selected author page, and refreshes
     if (view) renderer.act(() => view.unmount());
   }
   assert.equal(extension.api.events.listenerCount('amalur-health-refresh'), 0);
+});
+
+test('four persisted records for one cached module register only one page and one set of handlers', async () => {
+  const extension = loadExtension();
+  for (let i = 0; i < 3; i += 1) assert.equal(extension.initializeAgain(), true);
+  assert.equal(extension.pages.length, 1);
+  assert.equal(extension.games.length, 1);
+  assert.equal(extension.installers.length, 1);
+  assert.equal(extension.checks.length, 4);
+  assert.equal(extension.api.events.listenerCount('mod-enabled'), 1);
+  let refreshed = 0;
+  extension.api.events.on('amalur-health-refresh', () => { refreshed += 1; });
+  extension.api.events.emit('mod-enabled');
+  assert.equal(refreshed, 1);
+});
+
+test('leaving and reopening the page removes hidden listeners and refreshes once on return', async () => {
+  const extension = loadExtension();
+  let calls = 0;
+  const checks = [{ id: 'test', name: 'Test', optional: false, check: async () => {
+    calls += 1;
+    return { status: 'passed', message: 'Ready', details: 'Diagnostic information' };
+  } }];
+  const Page = createHealthPage(checks, extension.api);
+  let view;
+  try {
+    await renderer.act(async () => { view = renderer.create(React.createElement(Page, { active: true })); });
+    assert.equal(calls, 1);
+    assert.equal(view.root.findByType('details').props.open, undefined);
+    await renderer.act(async () => { view.update(React.createElement(Page, { active: false })); });
+    assert.equal(extension.api.events.listenerCount('amalur-health-refresh'), 0);
+    await renderer.act(async () => { extension.api.events.emit('amalur-health-refresh'); });
+    assert.equal(calls, 1);
+    await renderer.act(async () => { view.update(React.createElement(Page, { active: true })); });
+    assert.equal(calls, 2);
+    assert.equal(extension.api.events.listenerCount('amalur-health-refresh'), 1);
+  } finally {
+    if (view) renderer.act(() => view.unmount());
+  }
+});
+
+test('a slow scan from the previous page visit cannot overwrite the new result', async () => {
+  const extension = loadExtension();
+  let resolveOld;
+  let calls = 0;
+  const checks = [{ id: 'test', name: 'Test', optional: false, check: () => {
+    calls += 1;
+    return calls === 1 ? new Promise((resolve) => { resolveOld = resolve; })
+      : Promise.resolve({ status: 'passed', message: 'Current result' });
+  } }];
+  const Page = createHealthPage(checks, extension.api);
+  let view;
+  try {
+    await renderer.act(async () => { view = renderer.create(React.createElement(Page, { active: true })); });
+    await renderer.act(async () => { view.update(React.createElement(Page, { active: false })); });
+    await renderer.act(async () => { view.update(React.createElement(Page, { active: true })); });
+    await renderer.act(async () => { resolveOld({ status: 'failed', message: 'Stale result' }); });
+    assert.equal(view.root.findByProps({ role: 'status' }).children.join(''), 'Current result');
+  } finally {
+    if (view) renderer.act(() => view.unmount());
+  }
 });

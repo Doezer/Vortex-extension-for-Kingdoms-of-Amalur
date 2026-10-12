@@ -13,7 +13,7 @@ class ProcessCanceled extends Error {
 // Vortex is an Electron/Windows host, not an npm runtime dependency. Execute the
 // actual entry point with only the host surface mocked; installer code is real.
 function loadExtension(root = path.resolve(__dirname, '..'), helper) {
-  const registration = { logs: [], notifications: [], dismissed: [], opened: [], checks: [], asyncHandlers: {}, state: { settings: { gameMode: { discovered: {} } } } };
+  const registration = { logs: [], notifications: [], dismissed: [], opened: [], checks: [], pages: [], games: [], installers: [], asyncHandlers: {}, state: { settings: { gameMode: { discovered: {} } } } };
   const api = {
     log: (level, message, metadata) => registration.logs.push({ level, message, metadata }),
     selectors: { activeGameId: (state) => state.settings?.gameMode?.activeGameId },
@@ -46,15 +46,17 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
     },
     requireVersion: (range) => { registration.range = range; },
     optional: { registerHealthCheck: (check) => registration.checks.push(check) },
-    registerMainPage: (icon, title, component, options) => { registration.page = { icon, title, component, options }; },
+    registerMainPage: (icon, title, component, options) => { registration.page = { icon, title, component, options }; registration.pages.push(registration.page); },
     once: (callback) => callback(),
-    registerGame: (game) => { registration.game = game; },
+    registerGame: (game) => { registration.game = game; registration.games.push(game); },
     registerInstaller: (id, priority, test, install) => {
       registration.installer = { id, priority, test, install };
+      registration.installers.push(registration.installer);
     },
   };
   registration.loaded = sandbox.module.exports.default(context);
   registration.api = context.api;
+  registration.initializeAgain = () => sandbox.module.exports.default({ ...context });
   return registration;
 }
 

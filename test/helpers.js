@@ -12,8 +12,9 @@ class ProcessCanceled extends Error {
 // Vortex is an Electron/Windows host, not an npm runtime dependency. Execute the
 // actual entry point with only the host surface mocked; installer code is real.
 function loadExtension(root = path.resolve(__dirname, '..'), helper) {
-  const registration = {};
+  const registration = { logs: [], notifications: [] };
   const api = {
+    log: (level, message, metadata) => registration.logs.push({ level, message, metadata }),
     fs: {
       readFileAsync: fs.readFile,
       ensureDirWritableAsync: async (directory) => {
@@ -32,6 +33,9 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
   };
   vm.runInNewContext(require('node:fs').readFileSync(filename, 'utf8'), sandbox, { filename });
   const context = {
+    api: {
+      showErrorNotification: (title, error, options) => registration.notifications.push({ title, error, options }),
+    },
     requireVersion: (range) => { registration.range = range; },
     registerGame: (game) => { registration.game = game; },
     registerInstaller: (id, priority, test, install) => {

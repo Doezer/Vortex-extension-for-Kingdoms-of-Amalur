@@ -40,8 +40,14 @@ test('installer claims only this game and leaves scripted FOMODs to Vortex', asy
 });
 
 test('unsupported archives fail as a user-facing cancellation, never fall back to blind copy', async () => {
-  const { installer } = loadExtension();
+  const { installer, notifications, logs } = loadExtension();
   await assert.rejects(installer.install(['save.sav'], '/tmp', GAME_ID), (error) => error.name === 'ProcessCanceled' && /manual installation/.test(error.message));
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].title, 'Cannot install this Amalur mod');
+  assert.match(notifications[0].error.message, /manual installation/);
+  assert.equal(notifications[0].options.allowReport, false);
+  assert.equal(logs[0].level, 'warn');
+  assert.match(logs[0].metadata.reason, /manual installation/);
 });
 
 async function write(directory, relative, content) {

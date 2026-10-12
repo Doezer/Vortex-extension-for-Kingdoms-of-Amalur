@@ -136,3 +136,25 @@ test('malformed script array is an explanatory archive error', async () => {
 test('script entries must have the trigger required by the framework', async () => {
   await assert.rejects(planInstall(['mod.json', 'test.lua'], async () => '{"scripts":[{"path":"mods/test.lua"}]}'), /Invalid script reference/);
 });
+test('bare framework manifests accept leading dot-backslash game-relative script paths', async () => {
+  const result = await planInstall(['mod.json', 'test.lua'], async () => JSON.stringify({ scripts: [{ trigger: 'test', path: '.\\mods\\test.lua' }] }));
+  assert.equal(result.instructions[1].destination, path.join('mods', 'test.lua'));
+});
+test('leading dot-slash in script references cannot disguise traversal', async () => {
+  await assert.rejects(planInstall(['mod.json', 'test.lua'], async () => JSON.stringify({ scripts: [{ trigger: 'test', path: './..\\test.lua' }] })), /Unsafe/);
+});
+test('prefixed documentation is excluded while similarly named Lua payloads remain', async () => {
+  const files = ['mods/test.json', 'mods/Reforged/readme_settings.lua', 'KOA_Reforged_README.md', 'KOA_Reforged_CHANGELOG.md', 'ELITE_ENEMIES_REFORGED_CHANGELOG.md'];
+  const result = await planInstall(files, textFor);
+  assert.deepEqual(result.instructions.map((instruction) => instruction.source), files.slice(0, 2));
+});
+test('KOA Reforged 1.3.5 uploaded archive file list installs its complete mods tree', async () => {
+  const files = require('./fixtures/koa-reforged-1.3.5-files.json');
+  const result = await planInstall(files, async () => { throw new Error('Explicit mods layout does not require manifest rewriting'); });
+  const payload = files.filter((filename) => filename.startsWith('mods/') && !filename.endsWith('/'));
+  assert.equal(payload.length, 35);
+  assert.deepEqual(result.instructions.map((instruction) => instruction.source), payload);
+  for (const instruction of result.instructions) {
+    assert.equal(instruction.destination, path.join(...instruction.source.split('/')));
+  }
+});

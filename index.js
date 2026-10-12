@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { fs, util } = require('vortex-api');
+const { fs, util, log } = require('vortex-api');
 const { planInstall, isFomod, readEntries } = require('./lib/installer');
 const { findGame } = require('./lib/discovery');
 const info = require('./info.json');
@@ -58,6 +58,8 @@ function main(context) {
         });
       } catch (error) {
         if (error.name === 'ArchiveLayoutError') {
+          log('warn', '[amalur] Mod archive rejected', { reason: error.message });
+          context.api.showErrorNotification('Cannot install this Amalur mod', error, { allowReport: false });
           throw new util.ProcessCanceled(error.message);
         }
         throw error;

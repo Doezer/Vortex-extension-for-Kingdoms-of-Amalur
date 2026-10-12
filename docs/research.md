@@ -85,3 +85,21 @@ load-order algorithm was inferred. Those require further game-specific evidence.
 Real third-party archive downloads require Nexus authentication and were not used;
 attempted public content-preview metadata was blocked. Fixtures reflect author
 descriptions and source behavior and are explicitly synthetic.
+
+## KOA Reforged installation report (0.1.1)
+
+The user supplied a Vortex log and KOA Reforged 1.3.5 ZIP (Nexus mod 89, file 259).
+The log showed successful extraction followed immediately by cancellation in this
+extension's installer. Running the supplied archive's file list through version
+0.1.0 reproduced an `ArchiveLayoutError` for `KOA_Reforged_README.md`.
+The documentation detector only recognized names beginning with README/CHANGELOG,
+so it incorrectly treated the mod-prefixed Markdown documents as runtime payloads.
+
+Version 0.1.1 recognizes labelled documentation with a mod-name prefix. Validation
+against the supplied ZIP confirmed that all 35 files in `mods/` stage at their
+original relative paths without changing their contents or JSON script references.
+The fixture saved in the repository contains filenames only; neither the mod's
+code nor the user's log is redistributed. Manifest examples use `.\\mods\\...`
+references, so the bare-manifest route now accepts safe leading dot-relative
+prefixes too. Rejected layouts are logged and shown in a Vortex error notification
+before installation is canceled. In-game loading remains unverified here.

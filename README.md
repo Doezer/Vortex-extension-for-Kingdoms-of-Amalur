@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.0.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.1.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -91,6 +91,9 @@ PAK must match your game's version/DLC; the extension cannot verify that compati
 Documentation, screenshots, and common archive metadata are excluded from mod
 deployment. The extension validates paths and rejects traversal, drive/UNC paths,
 Windows reserved filenames, and destination collisions before returning copy instructions.
+Named documentation may have a mod-name prefix, such as `KOA_Reforged_README.md`.
+Rejected layouts display the reason in a **Cannot install this Amalur mod** error
+notification and log it in `vortex.log` under `[amalur] Mod archive rejected`.
 Full root-loader packages preserve their companions, but packages containing
 executables or scripts that require manual execution are refused.
 
@@ -125,3 +128,6 @@ conflict targets, a simulated host deployment/purge lifecycle, and the packaged
 ZIP. Test payloads are synthetic and follow the published layouts; they are not
 downloaded third-party mod archives. See [research notes](docs/research.md) for
 sources and [the live validation checklist](docs/live-validation.md) before release.
+The KOA Reforged regression fixture contains only filenames from the user-supplied
+1.3.5 archive, with no third-party scripts or assets. That archive was also checked
+locally for complete staging without altering its 35 payload files.

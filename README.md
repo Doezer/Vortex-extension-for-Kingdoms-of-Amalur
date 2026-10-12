@@ -114,7 +114,10 @@ Packaging is deterministic and checks a byte-for-byte ZIP round trip.
 
 GitHub Actions runs syntax/metadata checks, tests, and packaging on Windows and
 Linux with Node 22 and 24, and uploads the installable ZIP as an artifact.
-It does not publish a GitHub release or upload anything to Nexus Mods.
+Regular CI does not publish releases. The manually triggered **Publish prerelease**
+workflow validates and builds the selected commit, then publishes its ZIP to a
+GitHub prerelease using the corresponding notes in `docs/releases/`.
+Neither workflow uploads anything to Nexus Mods.
 
 Tests exercise the actual entry point with a small Vortex API double, the real
 installer/discovery modules, extracted-file reads, temporary staging files,

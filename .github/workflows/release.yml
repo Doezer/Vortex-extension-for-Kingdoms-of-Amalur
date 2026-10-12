@@ -1,0 +1,37 @@
+name: Publish prerelease
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - name: Publish tested ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="$(node -p 'require("./info.json").version')"
+          gh release create "v${release_version}" \
+            "dist/game-kingdomsofamalurrereckoning-${release_version}.zip" \
+            --target "$GITHUB_SHA" \
+            --title "v${release_version} — Vortex extension" \
+            --notes-file "docs/releases/v${release_version}.md" \
+            --prerelease

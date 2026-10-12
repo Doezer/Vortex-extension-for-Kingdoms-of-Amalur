@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.1.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.2.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -41,7 +41,19 @@ Slash and backslash archive paths and capitalized `Data`/`Mods` folders are acce
 | `dxgi.dll`, `ReShade.ini`, `reshade-shaders/...` | Same paths | Preserves shader/texture directories and accompanying presets. |
 
 Install [Mod Framework](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/9)
-before dependent framework mods. The framework scans JSON and DLL plugins directly
+before dependent framework mods.
+
+Starting with extension 0.1.2, installing a package with a `mods/` payload adds a
+Vortex **requires** rule for Mod Framework 1.4 or newer. The reference points to
+Nexus mod 9, main file 39 (1.4); a newer installed framework can satisfy the version
+range. Vortex handles dependency resolution and its normal download/login flow.
+The framework distribution itself is exempt to avoid a circular dependency.
+PAK replacements, video replacements, and ReShade packages do not require it.
+Reinstall framework-based mods installed using an older extension once to attach
+the dependency rule. Install and enable the framework through Vortex, rather than
+only copying its DLLs manually, so the managed dependency can be recognized.
+
+The framework scans JSON and DLL plugins directly
 inside `mods/`; nested manifest/plugin folders are rejected instead of installing
 files the framework will not load. Bare Lua scripts do not run automatically.
 For bare manifests, bundled Lua scripts are installed at the game-relative paths
@@ -54,6 +66,28 @@ Install ReShade separately following the preset author's instructions, then sele
 the deployed preset in the ReShade overlay. Installing a preset does not install
 ReShade or download missing shader dependencies. Injector DLLs recognized as root
 markers are `dinput8.dll`, `re_mod.dll`, `dxgi.dll`, `d3d11.dll`, and `d3d9.dll`.
+
+## Optional tools and recommendations
+
+When managing the game, the extension offers dismissible setup links:
+
+- [Save Editor (mod 8)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/8):
+  an optional standalone tool. Download the remaster **3.x** release separately and
+  extract its complete distribution into `<game>/tools/KoAR.SaveEditor/`, with
+  `KoAR.SaveEditor.exe` directly in that folder. The extension detects this location
+  for Vortex's Dashboard tools. For another location, configure the executable in
+  **Dashboard > Tools**. It remains optional and never replaces the game launcher.
+  The binary is not bundled: the Nexus author prohibits reuploads. Follow the
+  author's save-editing instructions and back up the save you intend to edit.
+- [F2 Console (mod 14)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/14):
+  recommended, optional in-game console. F2 Console itself needs Mod Framework.
+- [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
+  recommended, optional intro-video replacements.
+
+These suggestions open the author's pages when clicked. They do not automatically
+download, run, or require the optional tools/mods. A Mod Framework reminder appears
+when either `dinput8.dll` or `re_mod.dll` is absent from the game folder; this file
+check is a setup hint, not a check of the DLL's version or runtime compatibility.
 
 ## Conflicts, disabling, and game updates
 

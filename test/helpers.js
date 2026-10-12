@@ -12,17 +12,18 @@ class ProcessCanceled extends Error {
 // Vortex is an Electron/Windows host, not an npm runtime dependency. Execute the
 // actual entry point with only the host surface mocked; installer code is real.
 function loadExtension(root = path.resolve(__dirname, '..'), helper) {
-  const registration = { logs: [], notifications: [] };
+  const registration = { logs: [], notifications: [], dismissed: [], opened: [], state: { settings: { gameMode: { discovered: {} } } } };
   const api = {
     log: (level, message, metadata) => registration.logs.push({ level, message, metadata }),
     fs: {
+      statAsync: fs.stat,
       readFileAsync: fs.readFile,
       ensureDirWritableAsync: async (directory) => {
         await fs.mkdir(directory, { recursive: true });
         await fs.access(directory, 2);
       },
     },
-    util: { ProcessCanceled, GameStoreHelper: helper },
+    util: { ProcessCanceled, GameStoreHelper: helper, opn: async (url) => { registration.opened.push(url); } },
   };
   const filename = path.join(root, 'index.js');
   const localRequire = createRequire(filename);
@@ -34,6 +35,9 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
   vm.runInNewContext(require('node:fs').readFileSync(filename, 'utf8'), sandbox, { filename });
   const context = {
     api: {
+      store: { getState: () => registration.state },
+      sendNotification: (notification) => registration.notifications.push(notification),
+      dismissNotification: (id) => registration.dismissed.push(id),
       showErrorNotification: (title, error, options) => registration.notifications.push({ title, error, options }),
     },
     requireVersion: (range) => { registration.range = range; },

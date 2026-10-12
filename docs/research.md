@@ -103,3 +103,29 @@ code nor the user's log is redistributed. Manifest examples use `.\\mods\\...`
 references, so the bare-manifest route now accepts safe leading dot-relative
 prefixes too. Rejected layouts are logged and shown in a Vortex error notification
 before installation is canceled. In-game loading remains unverified here.
+
+## Dependency and optional-tool setup (0.1.2)
+
+The user requested Mod Framework (mod 9) as a prerequisite, Save Editor (mod 8)
+as an optional tool, and F2 Console (mod 14)/No Logos (mod 4) as recommendations.
+The framework's current Files page lists main file 39, version 1.4. Vortex's
+`IModRule` and `IModReference` types support a `requires` rule with Nexus repository,
+game/mod/file IDs, and a fuzzy semantic version range. Its reference matcher accepts
+another installed file from the same mod page when that version range is satisfied.
+Installation instructions emit that rule for `mods/` payloads, except a package
+already supplying both framework runtime DLLs. Other archive types are independent.
+Existing mods need one reinstall to obtain the new rule.
+
+Mod 14's description identifies it as **F2 Console**, which itself requires Mod
+Framework. Mod 8's page identifies the remaster-compatible editor as **3.x** and
+prohibits uploads elsewhere. The author's `KoAR.SaveEditor.csproj` has the default
+assembly name `KoAR.SaveEditor`, so the executable is `KoAR.SaveEditor.exe`.
+The extension registers a standalone Vortex tool and a download/setup suggestion;
+it does not redistribute that executable. Detection checks the documented portable
+directory and can be overridden through Vortex's tool configuration.
+All optional suggestions are dismissible links, never runtime dependency rules.
+
+Tests cover emitted rules, framework self-dependency exclusion, independent mods,
+runtime-file setup hints, tool discovery and optional recommendation actions.
+Live Vortex dependency downloading and in-game framework initialization remain
+unverified in the cloud workspace.

@@ -4,6 +4,7 @@ const path = require('path');
 const { fs, util, log } = require('vortex-api');
 const { planInstall, isFomod, readEntries } = require('./lib/installer');
 const { findGame } = require('./lib/discovery');
+const { withFrameworkRequirement, saveEditorTool, showSetupSuggestions } = require('./lib/integration');
 const info = require('./info.json');
 
 const GAME_ID = 'kingdomsofamalurrereckoning';
@@ -28,6 +29,7 @@ function main(context) {
     contributed: 'Doezer',
     final: false,
     version: info.version,
+    supportedTools: [saveEditorTool(context.api, fs)],
     details: {
       steamAppId: 1041720,
       gogAppId: '1077045575',
@@ -35,7 +37,10 @@ function main(context) {
       stopPatterns: ['(^|/)data/', '(^|/)mods/', '(^|/)reshade-shaders/', '\\.(pak|dll|ini)$'],
     },
     // Do not patch game archives or launch external tools during activation.
-    setup: (discovery) => fs.ensureDirWritableAsync(discovery.path, () => Promise.resolve()),
+    setup: async (discovery) => {
+      await fs.ensureDirWritableAsync(discovery.path, () => Promise.resolve());
+      await showSetupSuggestions(context.api, fs, util, discovery);
+    },
   });
 
   context.registerInstaller(
@@ -52,10 +57,11 @@ function main(context) {
         throw new util.ProcessCanceled('This installer only supports Kingdoms of Amalur: Re-Reckoning.');
       }
       try {
-        return await planInstall(files, async (source) => {
+        const result = await planInstall(files, async (source) => {
           const entry = readEntries([source])[0];
           return fs.readFileAsync(path.join(destinationPath, ...entry.parts), 'utf8');
         });
+        return withFrameworkRequirement(result);
       } catch (error) {
         if (error.name === 'ArchiveLayoutError') {
           log('warn', '[amalur] Mod archive rejected', { reason: error.message });

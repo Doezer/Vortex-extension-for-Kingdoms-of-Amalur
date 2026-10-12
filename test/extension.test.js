@@ -78,6 +78,7 @@ test('real file staging and simulated host deployment: conflict, disable, and re
     for (const [filename, content] of Object.entries(payload)) await write(extracted, filename, content);
     const plan = await installer.install(Object.keys(payload), extracted, GAME_ID);
     for (const instruction of plan.instructions) {
+      if (instruction.type !== 'copy') continue;
       const destination = path.join(staging, instruction.destination);
       await fs.mkdir(path.dirname(destination), { recursive: true });
       await fs.copyFile(path.join(extracted, ...instruction.source.split(/[\\/]/)), destination);

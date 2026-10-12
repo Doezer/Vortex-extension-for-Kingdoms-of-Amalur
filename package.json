@@ -1,0 +1,14 @@
+{
+  "name": "game-kingdomsofamalurrereckoning",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vortex game support for Kingdoms of Amalur: Re-Reckoning",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "check": "node scripts/check.js",
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.js"
+  },
+  "devDependencies": { "fflate": "0.8.2" }
+}

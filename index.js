@@ -1,10 +1,10 @@
 'use strict';
 
 const path = require('path');
-const { fs, util, log, selectors, MainPage } = require('vortex-api');
+const { fs, util, log, selectors, MainPage, actions } = require('vortex-api');
 const { planInstall, isFomod, readEntries } = require('./lib/installer');
 const { findGame } = require('./lib/discovery');
-const { withFrameworkRequirement, saveEditorTool } = require('./lib/integration');
+const { withFrameworkRequirement, saveEditorTool, duplicateExtensionRecords } = require('./lib/integration');
 const { createHealthChecks } = require('./lib/health');
 const { createHealthPage } = require('./lib/healthPage');
 const info = require('./info.json');
@@ -26,6 +26,14 @@ function main(context) {
     visible: () => context.api.store !== undefined && selectors.activeGameId(context.api.store.getState()) === GAME_ID,
   });
   context.once(() => {
+    // Drag-and-drop installs get random saved-state keys even when info.id and
+    // the destination folder are stable. Forget only redundant records; the
+    // removeExtension action would also schedule deletion of our shared folder.
+    if (typeof actions?.forgetExtension === 'function') {
+      const duplicates = duplicateExtensionRecords(context.api.store.getState(), info, __dirname);
+      for (const key of duplicates) context.api.store.dispatch(actions.forgetExtension(key));
+      if (duplicates.length > 0) log('info', '[amalur] Cleared duplicate extension records', { count: duplicates.length });
+    }
     for (const id of ['amalur-mod-framework-required', 'amalur-save-editor-suggestion', 'amalur-recommended-mods']) context.api.dismissNotification(id);
     const refresh = () => { context.api.events.emit('amalur-health-refresh'); };
     for (const event of ['gamemode-activated', 'profile-did-change', 'did-install-mod', 'mod-enabled', 'mod-disabled', 'did-remove-mod']) context.api.events.on(event, refresh);

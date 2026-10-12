@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.4.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.5.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -75,7 +75,10 @@ setup notifications. The page refreshes on profile/mod changes and after deploym
 or purge; **Refresh checks** also reruns it after changes made outside Vortex.
 Status badges show which items are ready. Expand **Check details** for diagnostics.
 Updating to 0.1.4 prevents repeated Vortex initialization from adding duplicate pages;
-restart Vortex after replacing the extension.
+restart Vortex after installing the extension. From 0.1.5, startup also forgets
+duplicate saved entries for this extension at the same folder, retaining the
+current version. Manual ZIP installation overwrites files but Vortex creates a
+new saved entry; do not remove individual old entries sharing that folder.
 
 **Mod Framework** appears under **Mod framework**. Its check verifies
 that `dinput8.dll` and `re_mod.dll` are files with nonzero size in the game folder.

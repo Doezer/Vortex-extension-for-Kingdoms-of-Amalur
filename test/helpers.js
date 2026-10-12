@@ -26,6 +26,7 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
       },
     },
     util: { ProcessCanceled, GameStoreHelper: helper, opn: async (url) => { registration.opened.push(url); } },
+    actions: { forgetExtension: (key) => ({ type: 'FORGET_EXTENSION', payload: key }) },
   };
   const filename = path.join(root, 'index.js');
   const localRequire = createRequire(filename);
@@ -39,7 +40,9 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
     api: {
       events: new EventEmitter(),
       onAsync: (event, handler) => { registration.asyncHandlers[event] = handler; },
-      store: { getState: () => registration.state },
+      store: { getState: () => registration.state, dispatch: (action) => {
+        if (action.type === 'FORGET_EXTENSION') delete registration.state.app.extensions[action.payload];
+      } },
       sendNotification: (notification) => registration.notifications.push(notification),
       dismissNotification: (id) => registration.dismissed.push(id),
       showErrorNotification: (title, error, options) => registration.notifications.push({ title, error, options }),
@@ -47,7 +50,7 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
     requireVersion: (range) => { registration.range = range; },
     optional: { registerHealthCheck: (check) => registration.checks.push(check) },
     registerMainPage: (icon, title, component, options) => { registration.page = { icon, title, component, options }; registration.pages.push(registration.page); },
-    once: (callback) => callback(),
+    once: (callback) => { registration.startup = callback; callback(); },
     registerGame: (game) => { registration.game = game; registration.games.push(game); },
     registerInstaller: (id, priority, test, install) => {
       registration.installer = { id, priority, test, install };

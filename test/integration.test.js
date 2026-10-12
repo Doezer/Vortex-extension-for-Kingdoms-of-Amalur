@@ -96,3 +96,39 @@ test('a configured save editor does not receive another installation suggestion'
   await extension.game.setup({ path: directory });
   assert.ok(!extension.notifications.some((notification) => notification.id === 'amalur-save-editor-suggestion'));
 });
+
+test('manual ZIP upgrade forgets duplicate state records without deleting the shared folder', async () => {
+  const { duplicateExtensionRecords } = require('../lib/integration');
+  const info = require('../info.json');
+  const folder = path.resolve(__dirname, '..');
+  const extension = loadExtension();
+  const entry = (version, extra = {}) => ({ infoJsonId: info.id, path: folder, version, enabled: true, ...extra });
+  extension.state.app = { extensions: {
+    old: entry('0.1.0'),
+    disabled: entry('0.1.3', { enabled: false }),
+    pendingRemoval: entry('0.1.4', { remove: true }),
+    current: entry(info.version),
+    anotherCopy: entry('0.1.3', { path: path.join(folder, 'other') }),
+    unrelated: entry('0.1.0', { infoJsonId: 'another-extension' }),
+  } };
+  assert.deepEqual(duplicateExtensionRecords(extension.state, info, folder), ['old', 'disabled', 'pendingRemoval']);
+  extension.startup();
+  assert.deepEqual(Object.keys(extension.state.app.extensions), ['current', 'anotherCopy', 'unrelated']);
+  assert.equal(extension.state.app.extensions.current.remove, undefined);
+  assert.ok((await fs.stat(path.join(folder, 'index.js'))).isFile());
+  extension.startup();
+  assert.deepEqual(Object.keys(extension.state.app.extensions), ['current', 'anotherCopy', 'unrelated']);
+});
+
+test('duplicate record cleanup requires a live current version and matches Windows paths case-insensitively', () => {
+  const { duplicateExtensionRecords } = require('../lib/integration');
+  const info = require('../info.json');
+  const state = { app: { extensions: {
+    old: { infoJsonId: info.id, path: 'C:\\Vortex\\plugins\\amalur', version: '0.1.0' },
+    new: { infoJsonId: info.id, path: 'c:/vortex/plugins/AMALUR', version: info.version, enabled: false },
+  } } };
+  assert.deepEqual(duplicateExtensionRecords(state, info, 'C:\\Vortex\\plugins\\amalur'), []);
+  state.app.extensions.new.enabled = true;
+  assert.deepEqual(duplicateExtensionRecords(state, info, 'C:\\Vortex\\plugins\\amalur'), ['old']);
+  assert.deepEqual(duplicateExtensionRecords({}, info, 'C:\\Vortex\\plugins\\amalur'), []);
+});

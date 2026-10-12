@@ -177,3 +177,21 @@ The page uses the documented legacy MainPage shell within Vortex's page containe
 with an explicit body scroll area. Hidden pages unsubscribe from refresh events;
 request generations discard results after navigation/unmount. Optional suggestions
 remain visible without notifications and detailed diagnostics are collapsed.
+
+## Manual ZIP upgrade records (0.1.5)
+
+In Vortex v2.8.1, installExtension.ts replaces the directory based on info.json.id,
+but calls removeOldVersion only when installation data includes a catalogEntry.
+Manual drag-and-drop installation has none. app.ts addExtension always assigns a
+fresh shortid. Stable metadata therefore replaces files but does not deduplicate
+saved records. Renaming the ZIP or changing extension IDs cannot fix this safely.
+
+Startup cleanup uses the exported actions.forgetExtension, which removes a record
+without marking its directory for deletion. It only removes records matching both
+this infoJsonId and this module directory, and retains a live entry matching this
+installed version. actions.removeExtension is unsuitable: all versions share a
+folder, and removal could delete the current installed files on restart.
+
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/extension_manager/installExtension.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/reducers/app.ts
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/actions/app.ts

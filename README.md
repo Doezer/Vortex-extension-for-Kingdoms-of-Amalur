@@ -30,7 +30,10 @@ Vortex adds that dependency when installing them. PAK replacements, video mods a
 For ReShade presets, install ReShade separately as directed by the mod author.
 
 If two mods replace the same PAK or DLL, choose a winner using Vortex's conflict rules.
-PAK contents aren't merged. For archives containing several variants, select one and repackage it before installation.
+PAK contents aren't merged. For archives with a main payload and labelled optional folders, Vortex asks which extras to install.
+Packages containing only alternative variants still need one variant selected and repackaged.
+Installation guides and tutorial images are skipped. Invalid framework JSON needs to be
+corrected by the mod author.
 Saves, trainers and unrelated executable installers need manual installation.
 
 ## Amalur Essentials

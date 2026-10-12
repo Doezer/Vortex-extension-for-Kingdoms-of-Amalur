@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 — Mod archive compatibility
+
+- Offer optional-component selection for archives with main files and clearly named optional folders, including No-Intro Fix's Optional Openings Removal.
+- Skip installation/instruction documents and tutorial images outside game payload folders, while preserving data and shader textures.
+- Add regression tests for No-Intro Fix and documentation filtering. Invalid framework JSON remains rejected for the mod author to fix.
+
 ## 1.0.1 — Packaging compliance
 
 - Use an official Steam screenshot as the required text-free 640×360 `gameart.png` thumbnail.

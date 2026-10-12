@@ -132,3 +132,17 @@ test('duplicate record cleanup requires a live current version and matches Windo
   assert.deepEqual(duplicateExtensionRecords(state, info, 'C:\\Vortex\\plugins\\amalur'), ['old']);
   assert.deepEqual(duplicateExtensionRecords({}, info, 'C:\\Vortex\\plugins\\amalur'), []);
 });
+
+test('host optional-components dialog supports main-only, addons, and cancellation', async () => {
+  const files = require('./fixtures/no-intro-fix-files.json');
+  const extension = loadExtension();
+  const dialogs = [];
+  extension.api.showDialog = async (...args) => { dialogs.push(args); return { action: 'Install', input: {} }; };
+  assert.equal((await extension.installer.install(files, '/unused', GAME)).instructions.length, 7);
+  assert.equal(dialogs[0][2].checkboxes[0].value, false);
+  extension.api.showDialog = async () => ({ action: 'Install', input: { 0: true } });
+  assert.equal((await extension.installer.install(files, '/unused', GAME)).instructions.length, 18);
+  extension.api.showDialog = async () => ({ action: 'Cancel' });
+  await assert.rejects(extension.installer.install(files, '/unused', GAME), { name: 'ProcessCanceled' });
+  assert.equal(extension.notifications.length, 0);
+});

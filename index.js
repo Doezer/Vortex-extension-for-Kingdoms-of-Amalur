@@ -86,6 +86,15 @@ function main(context) {
         const result = await planInstall(files, async (source) => {
           const entry = readEntries([source])[0];
           return fs.readFileAsync(path.join(destinationPath, ...entry.parts), 'utf8');
+        }, {
+          chooseOptionalFolders: async (groups) => {
+            const result = await context.api.showDialog('question', 'Optional components', {
+              text: 'The main files will be installed. Select any optional components you also want.',
+              checkboxes: groups.map((group) => ({ id: group.id, text: group.name, value: false })),
+            }, [{ label: 'Cancel' }, { label: 'Install' }]);
+            if (result.action !== 'Install') throw new util.ProcessCanceled('Mod installation canceled.');
+            return groups.filter((group) => result.input?.[group.id] === true).map((group) => group.id);
+          },
         });
         return withFrameworkRequirement(result);
       } catch (error) {

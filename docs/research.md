@@ -240,3 +240,29 @@ No primary-tool action, mod enablement, or deployment is triggered.
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/download_management/selectors.ts
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/extensions/gamemode_management/actions/settings.ts
 - https://github.com/Nexus-Mods/node-7z/blob/b75def8d0d7d81a03f4526c52b8ada9a34a06479/lib/index.d.ts
+
+## Archive compatibility fixes (1.0.2)
+
+The uploaded EnemySpawnRateXPDurability v5 archive contains eight loose framework
+files. EnemySpawnMultiplier_Combat.json has a trailing comma after its vars object;
+all other five JSON files parse. The user explicitly requested that the extension
+not repair this author error. Strict JSON parsing remains in place, and a regression
+test confirms the malformed combat manifest remains rejected. No mod payload is
+rewritten. The framework source calls RapidJSON Document.Parse without relaxed
+flags; runtime compatibility of the supplied malformed file cannot be assumed.
+
+The uploaded No-Intro Fix archive contains seven main logo videos and eleven
+optional opening videos. A native Vortex checkbox dialog selects explicitly named
+optional roots alongside a main root; alternative A/B packages remain rejected.
+Selected roots are stripped before routing and destination collisions are checked.
+No optional group is selected by default. Installation.txt and tutorial.png are
+recognized as documentation; textures inside data/mods/reshade-shaders are retained.
+
+Local validation uses the actual entry point against the uploaded No-Intro ZIP,
+staging 7 main videos or 18 files with the addon. Copy payloads and the original
+archive remain unchanged. Repository fixtures contain filenames and synthetic
+manifest examples only, not third-party mod payloads.
+
+Sources:
+- https://github.com/DevCortez/KoaModFramework/blob/master/re_mod/dllmain.cpp
+- https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/types/IDialog.ts

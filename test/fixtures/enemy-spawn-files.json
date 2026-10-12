@@ -1,0 +1,10 @@
+[
+  "EnemySpawnMultiplier_Combat.json",
+  "EnemySpawnMultiplier_Core.json",
+  "EnemySpawnMultiplier_Guard.lua",
+  "EnemySpawnMultiplier_Resources.json",
+  "EnemySpawnMultiplier_TaskSemaphoreOverflowFix.json",
+  "EnemySpawnMultiplier_WeaponDurability.json",
+  "EnemySpawnMultiplier_XPMult.json",
+  "EnemySpawnMultiplier_XPMult.lua"
+]

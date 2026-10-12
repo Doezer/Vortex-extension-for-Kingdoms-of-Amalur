@@ -158,3 +158,56 @@ test('KOA Reforged 1.3.5 uploaded archive file list installs its complete mods t
     assert.equal(instruction.destination, path.join(...instruction.source.split('/')));
   }
 });
+
+for (const source of ['{"patches":[,]}', '{"patches":[1,,]}', '{"patches":,}', '{"patches":[] "other":1}']) {
+  test(`malformed framework JSON remains rejected: ${source}`, async () => {
+    await assert.rejects(planInstall(['combat.json'], async () => source), /Invalid framework JSON/);
+  });
+}
+
+test('malformed enemy-spawn manifest remains rejected for the author to fix', async () => {
+  const files = require('./fixtures/enemy-spawn-files.json');
+  await assert.rejects(planInstall(files, async (file) => file.endsWith('Combat.json')
+    ? '{"patches":[{"vars":{"attack_weight":[0,3]},},]}' : '{"patches":[]}'), /Invalid framework JSON: EnemySpawnMultiplier_Combat.json/);
+});
+
+test('No-Intro Fix installs seven main videos by default and offers its optional openings separately', async () => {
+  const files = require('./fixtures/no-intro-fix-files.json');
+  const base = await planInstall(files, textFor);
+  assert.equal(base.instructions.length, 7);
+  assert.ok(base.instructions.every((i) => !i.source.startsWith('Optional')));
+  let groups;
+  const all = await planInstall(files, textFor, { chooseOptionalFolders: async (options) => { groups = options; return ['0']; } });
+  assert.equal(groups[0].name, 'Optional Openings Removal');
+  assert.equal(all.instructions.length, 18);
+  assert.ok(all.instructions.every((i) => path.dirname(i.destination) === path.join('data', 'videos')));
+  assert.ok(all.instructions.every((i) => !i.destination.includes('Optional')));
+});
+
+test('wrapped optional components work but selected files cannot collide with the core', async () => {
+  const files = ['Pack/data/base.bik', 'Pack/Optional Openings/data/extra.bik'];
+  const result = await planInstall(files, textFor, { chooseOptionalFolders: async () => ['0'] });
+  assert.deepEqual(result.instructions.map((i) => i.destination), [path.join('data','base.bik'), path.join('data','extra.bik')]);
+  await assert.rejects(planInstall(['data/base.bik', 'Optional Extra/data/base.bik'], textFor, { chooseOptionalFolders: async () => ['0'] }), /Multiple files target/);
+});
+
+test('tutorial images are omitted outside payload folders while game and shader textures stay intact', async () => {
+  const result = await planInstall(['data/patch_0.pak', 'tutorial.png', 'Guide_Installation.jpg', 'data/tutorial.png'], textFor);
+  assert.deepEqual(result.instructions.map((i) => i.source), ['data/patch_0.pak', 'data/tutorial.png']);
+  const shader = await planInstall(['reshade-shaders/Textures/tutorial.png'], textFor);
+  assert.equal(shader.instructions.length, 1);
+});
+
+test('installation guides are skipped while ordinary payload text files are preserved', async () => {
+  const files = ['data/patch_0.pak', 'Installation.txt', 'Mod_Install.md', 'Instructions.pdf', 'How-To.txt', 'Tutorial.html', 'data/settings.txt'];
+  const result = await planInstall(files, textFor);
+  assert.deepEqual(result.instructions.map((i) => i.source), ['data/patch_0.pak', 'data/settings.txt']);
+});
+
+test('nested optional variants stay rejected instead of installing hidden subvariants', async () => {
+  await assert.rejects(planInstall(['data/base.bik', 'Optional Extra/data/a.bik', 'Optional Extra/Variant/data/b.bik'], textFor, { chooseOptionalFolders: async () => ['0'] }), /Nested optional variants/);
+});
+
+test('invalid optional selection cannot choose an unknown component', async () => {
+  await assert.rejects(planInstall(['data/base.bik', 'Optional Extra/data/a.bik'], textFor, { chooseOptionalFolders: async () => ['unknown'] }), /Invalid optional component selection/);
+});

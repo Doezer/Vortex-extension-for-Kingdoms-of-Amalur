@@ -1,14 +1,13 @@
 # Kingdoms of Amalur: Re-Reckoning — Vortex extension
 
 Vortex game support for the Windows PC remaster, **Re-Reckoning**, including
-Fatesworn installations. Requires Vortex **1.9 or newer**. This extension is a
-tested installer implementation; **live Vortex and in-game validation is still
-pending**. It does not support the original 2012 Reckoning.
+Fatesworn installations. Requires Vortex **1.9 or newer**. It does not support
+the original 2012 Reckoning. See the [changelog](CHANGELOG.md) for release features.
 
 ## Install the extension
 
-1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.7.zip`
+1. Download the extension ZIP from [GitHub Releases](https://github.com/Doezer/Vortex-extension-for-Kingdoms-of-Amalur/releases/latest), or build it using the commands below.
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-1.0.0.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -43,14 +42,13 @@ Slash and backslash archive paths and capitalized `Data`/`Mods` folders are acce
 Install [Mod Framework](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/9)
 before dependent framework mods.
 
-Starting with extension 0.1.2, installing a package with a `mods/` payload adds a
+Installing a package with a `mods/` payload adds a
 Vortex **requires** rule for Mod Framework 1.4 or newer. The reference points to
 Nexus mod 9, main file 39 (1.4); a newer installed framework can satisfy the version
 range. Vortex handles dependency resolution and its normal download/login flow.
 The framework distribution itself is exempt to avoid a circular dependency.
 PAK replacements, video replacements, and ReShade packages do not require it.
-Reinstall framework-based mods installed using an older extension once to attach
-the dependency rule. Install and enable the framework through Vortex, rather than
+Install and enable the framework through Vortex, rather than
 only copying its DLLs manually, so the managed dependency can be recognized.
 
 The framework scans JSON and DLL plugins directly
@@ -74,10 +72,8 @@ All setup checks and optional recommendations appear here, without startup or
 setup notifications. The page refreshes on profile/mod changes and after deployment
 or purge; **Refresh status** also reruns it after changes made outside Vortex.
 Status badges show which items are ready. Expand **Details** for diagnostics.
-Updating to 0.1.4 prevents repeated Vortex initialization from adding duplicate pages;
-restart Vortex after installing the extension. From 0.1.5, startup also forgets
-duplicate saved entries for this extension at the same folder, retaining the
-current version. Manual ZIP installation overwrites files but Vortex creates a
+The extension registers its page once and cleans duplicate saved entries at the
+same installation folder, retaining the current version. Manual ZIP installation overwrites files but Vortex creates a
 new saved entry; do not remove individual old entries sharing that folder.
 
 **Mod Framework** appears under **Mod framework**. Its check verifies
@@ -133,14 +129,13 @@ The checks also register with Vortex's native health-check engine when its API i
 available. The inspected built-in **Health check** view only renders its own
 dependency-report providers, so this extension supplies **Amalur Essentials**
 to make all four custom checks visible. Mod Framework's separate required-dependency
-rule remains in place for framework mods. Updating from 0.1.2 dismisses the old setup
-notification cards.
+rule remains in place for framework mods.
 
 ## Conflicts, disabling, and game updates
 
 Vortex manages staging, deployment, backups of replaced files, and purge. The
-extension only returns installation instructions; it does not edit game archives
-or copy files directly into the game. Back up files you modified manually before
+mod installer returns installation instructions without editing game archives.
+The standalone Save Editor installer writes only its tool folder and update backups. Back up files you modified manually before
 first deployment, and resolve any Vortex **external changes** prompt deliberately.
 
 Two mods replacing `data/patch_0.pak` conflict as **whole files**. Pick a winner in
@@ -158,8 +153,9 @@ PAK must match your game's version/DLC; the extension cannot verify that compati
 
 ## Manual-only and delegated formats
 
-- Standalone save editors, trainers, save-game downloads, patching programs,
-  and executable installers are refused. Install/use these manually as instructed.
+- Trainers, save-game downloads, patching programs and unrelated executable
+  installers are refused. Install/use these manually as instructed. Use the
+  dedicated Save Editor action in **Amalur Essentials** for the supported tool.
 - Raw DDS/BIN assets without a game-relative `data/` layout need the author's
   PAK rebuilding procedure. The extension does not execute `pakfilebuilder.exe`.
 - Original-game `bigs/` packages are not remaster packages.
@@ -194,15 +190,15 @@ npm run build
 ```
 
 The ZIP is written to `dist/` with `index.js` and `info.json` at its top level.
-It includes the local installer/discovery modules, README, license, and an original
+It includes the local installer/discovery modules, README, changelog, license, and an original
 SVG fallback tile. It includes no mod/game assets or development dependencies.
 Packaging is deterministic and checks a byte-for-byte ZIP round trip.
 
 GitHub Actions runs syntax/metadata checks, tests, and packaging on Windows and
 Linux with Node 22 and 24, and uploads the installable ZIP as an artifact.
-Regular CI does not publish releases. The manually triggered **Publish prerelease**
-workflow validates and builds the selected commit, then publishes its ZIP to a
-GitHub prerelease using the corresponding notes in `docs/releases/`.
+Regular CI does not publish releases. The manually triggered **Publish release**
+workflow validates and builds the selected commit, then publishes its ZIP as the
+latest stable GitHub release using [CHANGELOG.md](CHANGELOG.md).
 Neither workflow uploads anything to Nexus Mods.
 
 Tests exercise the actual entry point with a small Vortex API double, the real
@@ -210,7 +206,8 @@ installer/discovery modules, extracted-file reads, temporary staging files,
 conflict targets, a simulated host deployment/purge lifecycle, and the packaged
 ZIP. Test payloads are synthetic and follow the published layouts; they are not
 downloaded third-party mod archives. See [research notes](docs/research.md) for
-sources and [the live validation checklist](docs/live-validation.md) before release.
+sources and [the live validation checklist](docs/live-validation.md). Automated
+checks do not launch the game or Save Editor, or execute mod DLLs.
 The KOA Reforged regression fixture contains only filenames from the user-supplied
 1.3.5 archive, with no third-party scripts or assets. That archive was also checked
 locally for complete staging without altering its 35 payload files.

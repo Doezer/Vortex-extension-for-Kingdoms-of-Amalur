@@ -1,4 +1,4 @@
-name: Publish prerelease
+name: Publish release
 
 on:
   workflow_dispatch:
@@ -33,5 +33,5 @@ jobs:
             "dist/game-kingdomsofamalurrereckoning-${release_version}.zip" \
             --target "$GITHUB_SHA" \
             --title "v${release_version} — Vortex extension" \
-            --notes-file "docs/releases/v${release_version}.md" \
-            --prerelease
+            --notes-file CHANGELOG.md \
+            --latest

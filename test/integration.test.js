@@ -47,26 +47,16 @@ async function temporaryGame(t) {
   return directory;
 }
 
-test('game setup proposes required framework, optional tool, and optional mods', async (t) => {
+test('game setup has no framework, tool, or recommendation notifications', async (t) => {
   const directory = await temporaryGame(t);
   const extension = loadExtension();
   await extension.game.setup({ path: directory });
-  const framework = extension.notifications.find((notification) => notification.id === 'amalur-mod-framework-required');
-  assert.ok(framework);
-  await framework.actions[0].action();
-  assert.equal(extension.opened.at(-1), URL + '9');
-  const editor = extension.notifications.find((notification) => notification.id === 'amalur-save-editor-suggestion');
-  assert.match(editor.message, /not a runtime requirement/);
-  await editor.actions[0].action();
-  assert.equal(extension.opened.at(-1), URL + '8');
-  const recommended = extension.notifications.find((notification) => notification.id === 'amalur-recommended-mods');
-  assert.match(recommended.message, /Neither is a prerequisite/);
-  for (const action of recommended.actions) await action.action();
-  assert.deepEqual(extension.opened.slice(-2), [URL + '14', URL + '4']);
-  assert.equal(recommended.allowSuppress, true);
+  assert.equal(extension.notifications.length, 0);
+  assert.equal(extension.opened.length, 0);
+  assert.deepEqual(extension.dismissed, ['amalur-mod-framework-required', 'amalur-save-editor-suggestion', 'amalur-recommended-mods']);
 });
 
-test('complete framework runtime clears the setup reminder', async (t) => {
+test('complete framework runtime has no setup notifications', async (t) => {
   const directory = await temporaryGame(t);
   await fs.writeFile(path.join(directory, 'dinput8.dll'), 'synthetic proxy');
   await fs.writeFile(path.join(directory, 're_mod.dll'), 'synthetic framework');
@@ -76,12 +66,12 @@ test('complete framework runtime clears the setup reminder', async (t) => {
   assert.ok(!extension.notifications.some((notification) => notification.id === 'amalur-mod-framework-required'));
 });
 
-test('a different dinput8 loader alone cannot satisfy the framework reminder', async (t) => {
+test('a missing framework does not create a setup notification', async (t) => {
   const directory = await temporaryGame(t);
   await fs.writeFile(path.join(directory, 'dinput8.dll'), 'synthetic unrelated loader');
   const extension = loadExtension();
   await extension.game.setup({ path: directory });
-  assert.ok(extension.notifications.some((notification) => notification.id === 'amalur-mod-framework-required'));
+  assert.equal(extension.notifications.length, 0);
 });
 
 test('save editor is discovered at its documented portable location and remains optional', async (t) => {

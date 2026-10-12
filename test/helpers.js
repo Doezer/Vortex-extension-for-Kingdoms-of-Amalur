@@ -4,6 +4,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const vm = require('node:vm');
 const { createRequire } = require('node:module');
+const { EventEmitter } = require('node:events');
 
 class ProcessCanceled extends Error {
   constructor(message) { super(message); this.name = 'ProcessCanceled'; }
@@ -12,9 +13,10 @@ class ProcessCanceled extends Error {
 // Vortex is an Electron/Windows host, not an npm runtime dependency. Execute the
 // actual entry point with only the host surface mocked; installer code is real.
 function loadExtension(root = path.resolve(__dirname, '..'), helper) {
-  const registration = { logs: [], notifications: [], dismissed: [], opened: [], state: { settings: { gameMode: { discovered: {} } } } };
+  const registration = { logs: [], notifications: [], dismissed: [], opened: [], checks: [], asyncHandlers: {}, state: { settings: { gameMode: { discovered: {} } } } };
   const api = {
     log: (level, message, metadata) => registration.logs.push({ level, message, metadata }),
+    selectors: { activeGameId: (state) => state.settings?.gameMode?.activeGameId },
     fs: {
       statAsync: fs.stat,
       readFileAsync: fs.readFile,
@@ -35,18 +37,24 @@ function loadExtension(root = path.resolve(__dirname, '..'), helper) {
   vm.runInNewContext(require('node:fs').readFileSync(filename, 'utf8'), sandbox, { filename });
   const context = {
     api: {
+      events: new EventEmitter(),
+      onAsync: (event, handler) => { registration.asyncHandlers[event] = handler; },
       store: { getState: () => registration.state },
       sendNotification: (notification) => registration.notifications.push(notification),
       dismissNotification: (id) => registration.dismissed.push(id),
       showErrorNotification: (title, error, options) => registration.notifications.push({ title, error, options }),
     },
     requireVersion: (range) => { registration.range = range; },
+    optional: { registerHealthCheck: (check) => registration.checks.push(check) },
+    registerMainPage: (icon, title, component, options) => { registration.page = { icon, title, component, options }; },
+    once: (callback) => callback(),
     registerGame: (game) => { registration.game = game; },
     registerInstaller: (id, priority, test, install) => {
       registration.installer = { id, priority, test, install };
     },
   };
   registration.loaded = sandbox.module.exports.default(context);
+  registration.api = context.api;
   return registration;
 }
 

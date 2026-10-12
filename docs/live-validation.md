@@ -33,6 +33,14 @@ archive tree, and results. Obtain the mods from their authors; none are bundled 
 10. Purge before a store repair/update; test redeployment using mods compatible
     with that updated version. Confirm the new original files are not replaced
     with an obsolete backup.
+11. Open **Amalur health checks**. With no framework, confirm that the required
+    row identifies missing runtime DLLs and that the other three rows are optional.
+    Enable/deploy the framework and refresh: the framework row should pass. Disable
+    or purge it and confirm the row updates. Check the optional editor at its portable
+    and custom paths; enable/disable the two recommended mods and check their rows.
+    Browser links should open their author pages without marking a check passed.
+    Confirm there are no setup/recommendation notifications and the page is hidden
+    when another game is active.
 
 Published archive contents and live game loading have not yet been verified in
 this cloud workspace. If a package does not match a supported layout, collect its

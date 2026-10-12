@@ -8,7 +8,7 @@ pending**. It does not support the original 2012 Reckoning.
 ## Install the extension
 
 1. Download the extension ZIP from a CI artifact, or build it using the commands below.
-2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.2.zip`
+2. In Vortex, open **Extensions** and drop `game-kingdomsofamalurrereckoning-0.1.3.zip`
    onto the **Drop File(s)** area. This is an extension, so do not install it in the Mods tab.
 3. Restart Vortex. Open **Games**, search for **Kingdoms of Amalur: Re-Reckoning**, and manage it.
 4. Automatic discovery checks Steam, GOG, then Epic. If discovery fails, manually
@@ -69,7 +69,19 @@ markers are `dinput8.dll`, `re_mod.dll`, `dxgi.dll`, `d3d11.dll`, and `d3d9.dll`
 
 ## Optional tools and recommendations
 
-When managing the game, the extension offers dismissible setup links:
+Open **Amalur health checks** in Vortex's sidebar while managing Re-Reckoning.
+All setup checks and optional recommendations appear here, without startup or
+setup notifications. The page refreshes on profile/mod changes and after deployment
+or purge; **Refresh checks** also reruns it after changes made outside Vortex.
+
+**Mod Framework** appears under **Required for framework mods**. Its check verifies
+that `dinput8.dll` and `re_mod.dll` are files with nonzero size in the game folder.
+For a managed Nexus mod 9 installation, it also checks whether the mod is enabled
+in the active profile and whether a recognized version is below 1.4. Filesystem
+access errors are reported as errors, not as a missing mod. These checks do not
+execute DLLs or establish in-game compatibility.
+
+The **Optional suggestions** section contains:
 
 - [Save Editor (mod 8)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/8):
   an optional standalone tool. Download the remaster **3.x** release separately and
@@ -84,10 +96,18 @@ When managing the game, the extension offers dismissible setup links:
 - [No Logos (mod 4)](https://www.nexusmods.com/kingdomsofamalurrereckoning/mods/4):
   recommended, optional intro-video replacements.
 
-These suggestions open the author's pages when clicked. They do not automatically
-download, run, or require the optional tools/mods. A Mod Framework reminder appears
-when either `dinput8.dll` or `re_mod.dll` is absent from the game folder; this file
-check is a setup hint, not a check of the DLL's version or runtime compatibility.
+Each unfulfilled check has an **Open … page** action for its author's Nexus page.
+Optional items do not block modding and are never installed or run automatically.
+The editor check validates the configured or portable executable; the F2 Console
+and No Logos checks inspect managed mods enabled in the active profile. Manually
+installed copies of those recommended mods cannot be identified by their metadata.
+
+The checks also register with Vortex's native health-check engine when its API is
+available. The inspected built-in **Health check** view only renders its own
+dependency-report providers, so this extension supplies **Amalur health checks**
+to make all four custom checks visible. Mod Framework's separate required-dependency
+rule remains in place for framework mods. Updating from 0.1.2 dismisses the old setup
+notification cards.
 
 ## Conflicts, disabling, and game updates
 
@@ -134,8 +154,10 @@ executables or scripts that require manual execution are refused.
 ## Development and CI
 
 Use Node.js **22 or 24** and npm. Vortex supplies `vortex-api` at runtime; it must
-not be installed or bundled from npm. The sole development dependency, `fflate`,
-creates ZIP distributions and is pinned in `package-lock.json`.
+not be installed or bundled from npm. Vortex also supplies React for the health
+page. Development dependencies are pinned in `package-lock.json`: `fflate` creates
+ZIP distributions, while React and its test renderer exercise the health page.
+Neither React nor any development dependencies are included in the ZIP.
 
 ```sh
 npm ci --ignore-scripts

@@ -129,3 +129,26 @@ Tests cover emitted rules, framework self-dependency exclusion, independent mods
 runtime-file setup hints, tool discovery and optional recommendation actions.
 Live Vortex dependency downloading and in-game framework initialization remain
 unverified in the cloud workspace.
+
+## Health checks instead of setup notifications (0.1.3)
+
+The user requested Mod Framework health validation and moved all four setup items
+out of notifications. Vortex's `IHealthCheck` API supports game-scoped descriptors,
+startup/game/profile/mod/manual triggers, categorized results, and optional action
+callbacks. Registration uses `context.optional.registerHealthCheck` so the extension
+can still load on older Vortex versions with no native custom-check API.
+
+The inspected `HealthCheckPage.tsx` gets displayed entries through a fixed
+`healthCheckContent` provider registry; it does not render arbitrary registered
+custom-check results. An existing Witcher extension explicitly notes that limitation.
+Using only native registration would therefore leave these items invisible. The
+extension registers a game-scoped **Amalur health checks** page using the supported
+`registerMainPage` API. It uses the same checks and refreshes on mod/profile changes,
+deployment/purge, and a manual button, with no notification mirroring.
+
+Framework validation examines both runtime files without executing them, along
+with managed profile enablement and recognized version metadata. Optional tool/mod
+checks report informational suggestions; browser actions never mark an installation
+healthy by themselves. Tests exercise real temporary filesystem changes and the
+React page's refresh, action, and subscription cleanup behavior. React is supplied
+by Vortex at runtime; test dependencies are not redistributed in the extension ZIP.

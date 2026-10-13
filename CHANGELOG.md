@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 — Nexus listing metadata
+
+- Add numerical Nexus game ID `3428` to `info.json`, as required by the updated extension listing process.
+- Validate that the ID is included in the packaged extension and update Nexus upload instructions. GitHub review requests are no longer required.
+
 ## 1.0.2 — Mod archive compatibility
 
 - Offer optional-component selection for archives with main files and clearly named optional folders, including No-Intro Fix's Optional Openings Removal.

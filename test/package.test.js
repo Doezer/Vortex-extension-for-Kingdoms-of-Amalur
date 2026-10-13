@@ -22,6 +22,7 @@ test('distribution ZIP is repeatable, self-contained, and loadable by the host',
   const packagedInfo = JSON.parse(Buffer.from(entries['info.json']).toString('utf8'));
   for (const field of ['name', 'author', 'version', 'description']) assert.ok(typeof packagedInfo[field] === 'string' && packagedInfo[field].trim());
   assert.match(packagedInfo.version, /^\d+\.\d+\.\d+$/);
+  assert.equal(packagedInfo.gameId, 3428, 'Nexus automatic listing requires the numerical remaster game ID');
   const artwork = Buffer.from(entries['gameart.png']);
   assert.deepEqual(artwork.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
   assert.equal(artwork.subarray(12, 16).toString('ascii'), 'IHDR');

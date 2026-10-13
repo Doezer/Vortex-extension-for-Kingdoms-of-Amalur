@@ -23,4 +23,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json')));
 if (metadata.version !== manifest.version || metadata.id !== manifest.name) {
   throw new Error('Extension metadata must match the package name and version.');
 }
+if (metadata.gameId !== 3428) {
+  throw new Error('info.json.gameId must be the numerical Nexus ID 3428 for Re-Reckoning.');
+}
 console.log('JavaScript syntax and extension metadata checked.');

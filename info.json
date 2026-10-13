@@ -2,6 +2,7 @@
   "id": "game-kingdomsofamalurrereckoning",
   "name": "Kingdoms of Amalur: Re-Reckoning",
   "author": "Doezer",
-  "version": "1.0.2",
-  "description": "Game discovery and installation of data replacements, Mod Framework packages, and ReShade presets."
+  "version": "1.0.3",
+  "description": "Game discovery and installation of data replacements, Mod Framework packages, and ReShade presets.",
+  "gameId": 3428
 }

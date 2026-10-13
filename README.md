@@ -67,6 +67,10 @@ npm run build
 ```
 
 The installable ZIP is written to `dist/`. CI runs on Windows and Linux.
+
+For Nexus uploads, use **Modding Tools → Vortex Extensions**, keep one Main File,
+and match its version to `info.json`. Vortex picks up uploads within two hours;
+when several extensions support a game, it lists the most endorsed one.
 See the [changelog](CHANGELOG.md), [guide verification](docs/verification.md), and [Windows testing checklist](docs/live-validation.md).
 
 The game thumbnail is an [official Steam screenshot](docs/artwork.md).

@@ -266,3 +266,21 @@ manifest examples only, not third-party mod payloads.
 Sources:
 - https://github.com/DevCortez/KoaModFramework/blob/master/re_mod/dllmain.cpp
 - https://github.com/Nexus-Mods/Vortex/blob/v2.8.1/src/renderer/src/types/IDialog.ts
+
+## Adjacent documentation (1.0.4)
+
+PACKAGE-STATUS.txt exposed the limits of recognizing documents by filename alone.
+The installer now classifies common text/document and image extensions outside
+explicit data/mods/reshade-shaders payload folders. Filtering happens before root
+and common-wrapper detection, so sidecars beside or outside a wrapped payload do
+not create spurious roots or prevent bare framework/preset recognition.
+
+Path validation still precedes filtering. Explicit payload folders retain their
+resources, including documentation-looking names and text files. Root DLL/loader
+packages retain unlabelled companion text and image resources in their runtime
+tree; known documentation names and folders are still omitted there. Unknown
+configuration, executable, binary and malformed JSON files are not discarded to
+force an otherwise unsupported installation to succeed. Source archives are never
+modified. Regression tests cover PACKAGE-STATUS.txt, arbitrary documents/images,
+wrapper placement, optional addons, runtime companions, preserved payload assets,
+unsafe sidecars, invalid JSON and alternative roots.

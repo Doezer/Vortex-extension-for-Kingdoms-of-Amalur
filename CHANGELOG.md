@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.4 — Adjacent documentation
+
+- Ignore common document and image files beside mod payloads regardless of filename, including PACKAGE-STATUS.txt, release notes, PDFs and cover images.
+- Preserve resources inside explicit data, mods and shader folders, plus unlabelled companion resources in DLL-loader packages.
+- Keep rejecting malformed JSON, unsafe paths, executables and ambiguous variants. Downloaded archives are unchanged.
+- Add regression coverage for loose and wrapped packages, framework mods, presets, optional components and runtime resources.
+
 ## 1.0.3 — Nexus listing metadata
 
 - Add numerical Nexus game ID `3428` to `info.json`, as required by the updated extension listing process.

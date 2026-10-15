@@ -185,7 +185,7 @@ test('No-Intro Fix installs seven main videos by default and offers its optional
 });
 
 test('wrapped optional components work but selected files cannot collide with the core', async () => {
-  const files = ['Pack/data/base.bik', 'Pack/Optional Openings/data/extra.bik'];
+  const files = ['Pack/data/base.bik', 'Pack/Optional Openings/data/extra.bik', 'Pack/PACKAGE-STATUS.txt', 'Pack/Optional Openings/Report.txt'];
   const result = await planInstall(files, textFor, { chooseOptionalFolders: async () => ['0'] });
   assert.deepEqual(result.instructions.map((i) => i.destination), [path.join('data','base.bik'), path.join('data','extra.bik')]);
   await assert.rejects(planInstall(['data/base.bik', 'Optional Extra/data/base.bik'], textFor, { chooseOptionalFolders: async () => ['0'] }), /Multiple files target/);
@@ -210,4 +210,38 @@ test('nested optional variants stay rejected instead of installing hidden subvar
 
 test('invalid optional selection cannot choose an unknown component', async () => {
   await assert.rejects(planInstall(['data/base.bik', 'Optional Extra/data/a.bik'], textFor, { chooseOptionalFolders: async () => ['unknown'] }), /Invalid optional component selection/);
+});
+
+for (const [name, files, expected] of [
+  ['root package status', ['data/patch_0.pak', 'PACKAGE-STATUS.txt'], ['data/patch_0.pak']],
+  ['status beside a wrapped payload', ['PACKAGE-STATUS.txt', 'Release/data/patch_0.pak'], ['data/patch_0.pak']],
+  ['status inside a wrapper', ['Release/PACKAGE-STATUS.txt', 'Release/data/patch_0.pak'], ['data/patch_0.pak']],
+  ['arbitrary document names', ['patch_0.pak', 'Notes.TXT', 'Author.nfo', 'Distribution.rtf', 'Overview.pdf', 'About.markdown', 'Support.url', 'cover.jpg'], ['data/patch_0.pak']],
+  ['bare framework sidecars', ['Bundle/mod.json', 'Bundle/STATUS.txt', 'Bundle/cover.png'], ['mods/mod.json']],
+  ['bare framework documentation outside wrapper', ['STATUS.txt', 'Bundle/mod.json'], ['mods/mod.json']],
+  ['bare Lua sidecars', ['Scripts/test.lua', 'Build.txt'], ['mods/test.lua']],
+  ['preset sidecars', ['Presets/style.ini', 'Presets/Details.txt', 'cover.webp'], ['style.ini']],
+  ['payload text and images', ['data/PACKAGE-STATUS.txt', 'data/tutorial.png', 'mods/README.txt', 'mods/assets/cover.svg', 'reshade-shaders/Textures/preview.jpg'], ['data/PACKAGE-STATUS.txt', 'data/tutorial.png', 'mods/README.txt', 'mods/assets/cover.svg', 'reshade-shaders/Textures/preview.jpg']],
+  ['runtime companion resources', ['Runtime/dinput8.dll', 'Runtime/strings.txt', 'Runtime/assets/cover.svg', 'STATUS.txt'], ['dinput8.dll', 'strings.txt', 'assets/cover.svg']],
+  ['runtime documented files', ['dinput8.dll', 'strings.txt', 'PACKAGE-STATUS.txt', 'README.txt'], ['dinput8.dll', 'strings.txt', 'PACKAGE-STATUS.txt']],
+]) {
+  test(`adjacent files: ${name}`, async () => {
+    const result = await planInstall(files, textFor);
+    assert.deepEqual(result.instructions.map((instruction) => instruction.destination), expected.map((file) => path.join(...file.split('/'))));
+  });
+}
+
+test('document-only archives still have no installable payload', async () => {
+  await assert.rejects(planInstall(['PACKAGE-STATUS.txt', 'cover.png', 'Support.url'], textFor), /no installable mod files/);
+});
+
+test('unsafe and executable adjacent files still fail rather than being discarded', async () => {
+  await assert.rejects(planInstall(['data/patch_0.pak', '../PACKAGE-STATUS.txt'], textFor), /Unsafe/);
+  await assert.rejects(planInstall(['data/patch_0.pak', 'Notes.txt.exe'], textFor), /manual installation/);
+  await assert.rejects(planInstall(['data/patch_0.pak', 'config.json', 'PACKAGE-STATUS.txt'], textFor), /Cannot determine/);
+});
+
+test('sidecars do not turn alternative payloads or malformed JSON into accepted mods', async () => {
+  await assert.rejects(planInstall(['A/data/patch_0.pak', 'B/data/patch_0.pak', 'PACKAGE-STATUS.txt'], textFor), /multiple mod roots/);
+  await assert.rejects(planInstall(['mod.json', 'PACKAGE-STATUS.txt'], async () => '{"patches":[],}'), /Invalid framework JSON/);
 });
